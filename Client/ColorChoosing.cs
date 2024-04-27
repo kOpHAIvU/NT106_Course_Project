@@ -19,11 +19,13 @@ namespace Client
             {
                 case "Red":
                     ConnectionOptions.PlayerName = "Red";
+                    ConnectionOptions.NameRedIsTaken = true;
                     Close();
                     DialogResult = DialogResult.OK;
                     break;
                 case "Blue":
                     ConnectionOptions.PlayerName = "Blue";
+                    ConnectionOptions.NameBlueIsTaken = true;
                     Close();
                     DialogResult = DialogResult.OK;
                     break;

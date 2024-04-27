@@ -18,6 +18,8 @@ namespace Client
         private readonly Player[] Players = new Player[2];
         private readonly Property[] Properties = new Property[40];
         private readonly PictureBox[] Tile;
+
+        //Các nhà đã được mua
         private class Property
         {
             public bool Buyable, Owned;
@@ -42,18 +44,20 @@ namespace Client
             if (Gamemodes.Multiplayer)
                 try
                 {
-                    var connection = new Connection();
+                    Connection connection = new Connection();
                     connection.ShowDialog();
                     if (connection.DialogResult is DialogResult.Cancel)
                     {
-                        var mainMenu = new MainMenu();
+                        MainMenu mainMenu = new MainMenu();
                         mainMenu.ShowDialog();
                         Disconnect();
                     }
-                    currentPlayersTurn_textbox.Text = "Waiting for second player...";
+
+                    currentPlayersTurn_textbox.Text = "Chờ đợi người chơi thứ hai...";
                     throwDiceBtn.Enabled = false;
                     buyBtn.Enabled = false;
                     endTurnBtn.Enabled = false;
+
                     try
                     {
                         Client = new TcpClient();
@@ -62,29 +66,34 @@ namespace Client
                     }
                     catch
                     {
-                        MessageBox.Show("Could not connect to the server."
+                        MessageBox.Show("Không thể kết nối tới server."
                                         + Environment.NewLine
-                                        + "Server is offline");
+                                        + "Server không hoạt động");
                         Disconnect();
                     }
-                    var receiveThread = new Thread(ReceiveMessage);
+
+                    Thread receiveThread = new Thread(ReceiveMessage);
                     receiveThread.Start();
+
                     Stream.Write(
-                        Encoding.Unicode.GetBytes("Someone has connected"),
+                        Encoding.Unicode.GetBytes("Người chơi mới đã vào"),
                         0,
-                        Encoding.Unicode.GetBytes("Someone has connected").Length);
-                    var colorChoosing = new ColorChoosing();
+                        Encoding.Unicode.GetBytes("Người chơi mới đã vào").Length);
+
+                    ColorChoosing colorChoosing = new ColorChoosing();
                     colorChoosing.ShowDialog();
                     if (colorChoosing.DialogResult is DialogResult.Cancel)
                     {
-                        var mainMenu = new MainMenu();
+                        MainMenu mainMenu = new MainMenu();
                         mainMenu.ShowDialog();
                         Disconnect();
                     }
+
                     Stream.Write(
                         Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName),
                         0,
                         Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName).Length);
+
                     switch (ConnectionOptions.PlayerName)
                     {
                         case "Red":
@@ -101,6 +110,7 @@ namespace Client
                 {
                     MessageBox.Show(ex.Message);
                 }
+
             #region Creating tiles and players
             Tile = new[]
             {
@@ -155,9 +165,11 @@ namespace Client
             UpdatePlayersStatusBoxes();
             buyBtn.Enabled = false;
         }
+
+        //Hàm thay đổi trạng thái các ô
         private void CreateTile(string tileName, bool tileBuyable, string tileColor, int tilePrice, int tilePosition)
         {
-            var property = new Property
+            Property property = new Property
             {
                 Name = tileName,
                 Color = tileColor,

@@ -30,14 +30,8 @@ namespace Client
 
         private void QuitBtn_Click(object sender, EventArgs e)
         {
-            switch (MessageBox.Show("Do you really want to exit?", "Exit", MessageBoxButtons.YesNo))
-            {
-                case DialogResult.Yes:
-                    Application.Exit();
-                    break;
-                case DialogResult.No:
-                    return;
-            }
+            if (MessageBox.Show("Bạn có muốn thoát?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                Application.Exit();
         }
     }
 }
