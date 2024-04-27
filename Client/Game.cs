@@ -120,45 +120,45 @@ namespace Client
                 tile31, tile32, tile33, tile34, tile35, tile36, tile37, tile38, tile39
             };
             CreateTile("GO", false, "Null", 0, 0);
-            CreateTile("Mediter-Ranean Avenue", true, "Brown", 60, 1);
-            CreateTile("Income Tax: Pay 200M", false, "White", 0, 2);
-            CreateTile("Baltic Avenue", true, "Brown", 60, 3);
-            CreateTile("Income Tax: Pay 200M", false, "White", 0, 4);
-            CreateTile("Reaing Railroad", true, "Station", 200, 5);
-            CreateTile("Oriental Avenue", true, "Turquoise", 100, 6);
-            CreateTile("Income Tax: Pay 200M", false, "White", 0, 7);
-            CreateTile("Vermont Avenue", true, "Turquoise", 100, 8);
-            CreateTile("Connecticut Avenue", true, "Turquoise", 120, 9);
-            CreateTile("Jail", false, "Null", 0, 10);
-            CreateTile("St. Charles Place", true, "Purple", 140, 11);
-            CreateTile("Income Tax: Pay 200M", false, "White", 0, 12);
-            CreateTile("States Avenue", true, "Purple", 140, 13);
-            CreateTile("Bones Lane", true, "Purple", 160, 14);
-            CreateTile("Pennsylvania Railroad", true, "Station", 200, 15);
-            CreateTile("St. James Place", true, "Orange", 180, 16);
-            CreateTile("Income Tax: Pay 200M", false, "White", 0, 17);
-            CreateTile("Tennessee Avenue", true, "Orange", 180, 18);
-            CreateTile("New York Avenue", true, "Orange", 200, 19);
-            CreateTile("Free Parking", false, "Null", 0, 20);
-            CreateTile("Kentucky Avenue", true, "Red", 220, 21);
-            CreateTile("Income Tax: Pay 200M", false, "White", 0, 22);
-            CreateTile("Indiana Avenue", true, "Red", 220, 23);
-            CreateTile("Illinois Avenue", true, "Red", 240, 24);
-            CreateTile("B.& O. Railroad", true, "Station", 200, 25);
-            CreateTile("Atlantic Avenue", true, "Yellow", 260, 26);
-            CreateTile("Ventnor Avenue", true, "Yellow", 260, 27);
-            CreateTile("Income Tax: Pay 200M", false, "White", 0, 28);
-            CreateTile("Marvin Gardens", true, "Yellow", 280, 29);
-            CreateTile("Go To Jail", false, "Null", 0, 30);
-            CreateTile("Pacific Avenue", true, "Green", 300, 31);
-            CreateTile("North Carolina Avenue", true, "Green", 300, 32);
-            CreateTile("Income Tax: Pay 200M", false, "White", 0, 33);
-            CreateTile("Pennsylvania Avenue", true, "Green", 320, 34);
-            CreateTile("Short Line", true, "Station", 200, 35);
-            CreateTile("Income Tax: Pay 200M", false, "White", 0, 36);
-            CreateTile("Park Place", true, "Blue", 350, 37);
-            CreateTile("Income Tax: Pay 200M", false, "White", 0, 38);
-            CreateTile("Boardwalk", true, "Blue", 400, 39);
+            CreateTile("Phú Lâm", true, "Purple", 60, 1);
+            CreateTile("Khí vận", false, "White", 0, 2);
+            CreateTile("Nhà bè Phú Xuân", true, "Purple", 60, 3);
+            CreateTile("Thuế lợi tức", false, "White", 0, 4);
+            CreateTile("Bến xe Lục Tỉnh", true, "Station", 200, 5);
+            CreateTile("Thị Nghè", true, "Turquoise", 100, 6);
+            CreateTile("Cơ hội", false, "White", 0, 7);
+            CreateTile("Tân Định", true, "Turquoise", 100, 8);
+            CreateTile("Bến Chương Dương", true, "Turquoise", 120, 9);
+            CreateTile("Thăm tù", false, "Null", 0, 10);
+            CreateTile("Phan Đình Phùng", true, "Pink", 140, 11);
+            CreateTile("Công ty điện lực", false, "White", 0, 12);
+            CreateTile("Trịnh Minh Thế", true, "Pink", 140, 13);
+            CreateTile("Lý Thái Tổ", true, "Pink", 160, 14);
+            CreateTile("Bến xe Lam Chợ Lớn", true, "Station", 200, 15);
+            CreateTile("Đại lộ Hùng Vương", true, "Orange", 180, 16);
+            CreateTile("Khí vận", false, "White", 0, 17);
+            CreateTile("Gia Long", true, "Orange", 180, 18);
+            CreateTile("Bến Bạch Đằng", true, "Orange", 200, 19);
+            CreateTile("Sân bay", false, "Null", 0, 20);
+            CreateTile("Đường Công Lý", true, "Red", 220, 21);
+            CreateTile("Cơ hội", false, "White", 0, 22);
+            CreateTile("Đại lộ thống nhất", true, "Red", 220, 23);
+            CreateTile("Đại lộ Cộng Hòa", true, "Red", 240, 24);
+            CreateTile("Bến xe An Đông", false, "Station", 200, 25);
+            CreateTile("Đại lộ Hồng Thập Tự", true, "Yellow", 260, 26);
+            CreateTile("Đại lộ Hai Bà Trưng", true, "Yellow", 260, 27);
+            CreateTile("Công ty thủy cục", false, "White", 0, 28);
+            CreateTile("Xa lộ Biên Hòa", true, "Yellow", 280, 29);
+            CreateTile("VÔ TÙ", false, "Null", 0, 30);
+            CreateTile("Phan Thanh Giảm", true, "Green", 300, 31);
+            CreateTile("Lê Văn Duyệt", true, "Green", 300, 32);
+            CreateTile("Khí vận", false, "White", 0, 33);
+            CreateTile("Nguyễn Thái Học", true, "Green", 320, 34);
+            CreateTile("Tân Kì Tân Quý", false, "White", 0, 35);
+            CreateTile("Cơ hội", false, "White", 0, 36);
+            CreateTile("Nha Trang", true, "Blue", 350, 37);
+            CreateTile("Thuế lương bổng", false, "White", 0, 38);
+            CreateTile("Cố Đô Huế", true, "Blue", 400, 39);
             Players[0] = new Player();
             Players[1] = new Player();
             #endregion
@@ -245,13 +245,13 @@ namespace Client
                 case "White":
                     Properties[CurrentPosition].Rent = 0;
                     break;
-                case "Brown":
+                case "Purple":
                     Properties[CurrentPosition].Rent = 60;
                     break;
                 case "Turquoise":
                     Properties[CurrentPosition].Rent = 120;
                     break;
-                case "Purple":
+                case "Pink":
                     Properties[CurrentPosition].Rent = 160;
                     break;
                 case "Orange":
