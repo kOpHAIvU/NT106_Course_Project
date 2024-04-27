@@ -572,6 +572,7 @@ namespace Client
                     break;
             }
         }
+
         private async Task<int> MoveTileByTile(int from, int to)
         {
             if (to < 40)
