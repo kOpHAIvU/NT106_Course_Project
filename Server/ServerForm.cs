@@ -61,5 +61,10 @@ namespace Server
                 server?.CloseAndExit();
             }
         }
+
+        private void ServerForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            server?.CloseAndExit();
+        }
     }
 }

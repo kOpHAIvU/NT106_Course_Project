@@ -106,7 +106,7 @@ namespace Client
                         mainMenu.ShowDialog();
                         Disconnect();
                     }
-                    //Gửi tên  người chơi đến server 
+                    //Gửi tên  người chơi đến server
                     Stream.Write(
                         Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName),
                         0,

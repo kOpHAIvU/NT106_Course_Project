@@ -26,9 +26,7 @@ namespace Server
                 Stream = Client.GetStream();
                 while (true)
                 {
-                    // nghe "NONSTOP 2024 TIKTOK - NHẠC REMIX HOT TREND NHẤT TIKTOK 2024 - NONSTOP VINAHOUSE 2024 BASS CỰC CĂNG" đi @VinhPham
-                    //điếc tai ê còn j nx kh t i tém cái :))) đm gội đầu nữa hmmm suy nghĩ công việc cho t đuy :))) 
-                    var message = GetMessage();
+                    string message = GetMessage();
                     switch (message)
                     {
                         case "Cả 2 người chơi đã kết nối":
@@ -40,7 +38,7 @@ namespace Server
                                 });
                                 break;
                             }
-                        case "Đỏ đã kết nối":
+                        case "Đỏ":
                             {
                                 Taken.Red = true;
                                 userName = message;
@@ -51,7 +49,7 @@ namespace Server
                                 server.SendMessageToOpponentClient(userName + " đã kết nối", Id);
                                 break;
                             }
-                        case "Xanh đã kết nối":
+                        case "Xanh":
                             {
                                 Taken.Blue = true;
                                 userName = message;
@@ -68,8 +66,10 @@ namespace Server
                                 {
                                     Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
                                 });
-                                if (Taken.Red) server.SendMessageToSender("Quân tốt Đỏ đã được chọn", Id);
-                                if (Taken.Blue) server.SendMessageToSender("Quân tốt Xanh đã được chọn", Id);
+                                if (Taken.Red) 
+                                    server.SendMessageToSender("Quân tốt Đỏ đã được chọn", Id);
+                                if (Taken.Blue) 
+                                    server.SendMessageToSender("Quân tốt Xanh đã được chọn", Id);
                                 break;
                             }
                         case "Quân tốt Đỏ đã được chọn":
