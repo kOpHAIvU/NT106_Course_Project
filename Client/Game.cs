@@ -11,27 +11,40 @@ namespace Client
 {
     public partial class Game : Form
     {
+        //Tạo TcpClient để kết nối Server 
         private static TcpClient Client = new TcpClient();
+        //Tạo luồng mạng để gửi nhận dữ liệu 
         private static NetworkStream Stream;
+        //Kiểm tra người chơi đỏ/ xanh đã kết nối hay chưa 
         private bool RedConnected, BlueConnected;
+        //Lưu giá trị của Xúc xắc, vị trí trên bàn cờ, ID của người chơi, 
         private static int Dice, CurrentPosition, CurrentPlayerId, RedDotsNameSplitter, BlueDotsNameSplitter;
+        //Lưu thông tin của người chơi 
         private readonly Player[] Players = new Player[2];
+        //Lưu thông tin của các ô trên bàn cờ 
         private readonly Property[] Properties = new Property[40];
+        //Chứa hình ảnh của các ô 
         private readonly PictureBox[] Tile;
 
         //Các nhà đã được mua
         private class Property
         {
+            //Kiểm tra đã mua hoặc đã sở hữu chưa
             public bool Buyable, Owned;
             public string Color, Name;
             public int Price, Rent;
         }
+        //Thông tin 1 người chơi 
         private class Player
         {
+            //Cho biết số dư, số lượng tài sản, số lần vào tù, vị trí hiện tại 
             public int Balance = 1500, NumberOfPropertiesOwned, Jail, Position;
+            //Tình trạng giam giữ/ thua cuộc
             public bool InJail, Loser;
+            //ID của tài sản 
             public readonly int[] PropertiesOwned = new int[40];
         }
+        //Nhận dữ liệu trên Server
         private class ReceivedMessage
         {
             public bool InJail, Loser;
@@ -41,23 +54,26 @@ namespace Client
         public Game()
         {
             InitializeComponent();
+            //Nếu nhiều người chơi 
             if (Gamemodes.Multiplayer)
                 try
                 {
+                    //Hiển thị form kết nối
                     Connection connection = new Connection();
                     connection.ShowDialog();
+                    //Nếu chọn Cancel thì hủy kết nối ròi quay về MainMenu chính 
                     if (connection.DialogResult is DialogResult.Cancel)
                     {
                         MainMenu mainMenu = new MainMenu();
                         mainMenu.ShowDialog();
                         Disconnect();
                     }
-
+                    //Hiển thị thông điệp là đang đợi người chơi thứ 2 nên vô hiệu hóa các nút chơi
                     currentPlayersTurn_textbox.Text = "Chờ đợi người chơi thứ hai...";
                     throwDiceBtn.Enabled = false;
                     buyBtn.Enabled = false;
                     endTurnBtn.Enabled = false;
-
+                    //Kết nối tới Server
                     try
                     {
                         Client = new TcpClient();
@@ -71,29 +87,30 @@ namespace Client
                                         + "Server không hoạt động");
                         Disconnect();
                     }
-
+                    //Tạo luồng nhận dữ liệu từ Server 
                     Thread receiveThread = new Thread(ReceiveMessage);
                     receiveThread.Start();
-
+                    //Gửi các thông điẹp cho server biết Người chơi mới vào 
                     Stream.Write(
                         Encoding.Unicode.GetBytes("Người chơi mới đã vào"),
                         0,
                         Encoding.Unicode.GetBytes("Người chơi mới đã vào").Length);
-
+                    //Hiển thị Form chọn màu 
                     ColorChoosing colorChoosing = new ColorChoosing();
                     colorChoosing.ShowDialog();
+                    //Nếu chọn Cancel thì hủy kết nối ròi quay về MainMenu chính 
                     if (colorChoosing.DialogResult is DialogResult.Cancel)
                     {
                         MainMenu mainMenu = new MainMenu();
                         mainMenu.ShowDialog();
                         Disconnect();
                     }
-
+                    //Gửi tên  người chơi đến server 
                     Stream.Write(
                         Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName),
                         0,
                         Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName).Length);
-
+                    //Xác định người chơi hiện tại và đánh dấu họ đã kết nối 
                     switch (ConnectionOptions.PlayerName)
                     {
                         case "Red":
@@ -110,7 +127,7 @@ namespace Client
                 {
                     MessageBox.Show(ex.Message);
                 }
-
+            //Tạo các ô trên bàn cờ và người chơi 
             #region Creating tiles and players
             Tile = new[]
             {
@@ -163,6 +180,7 @@ namespace Client
             Players[0] = new Player();
             Players[1] = new Player();
             #endregion
+            //Cập nhật giao diện người chơi 
             UpdatePlayersStatusBoxes();
             buyBtn.Enabled = false;
         }
@@ -236,6 +254,7 @@ namespace Client
                     break;
             }
         }
+
         private int GetRent(int dice)
         {
             switch (Properties[CurrentPosition].Color)
@@ -319,6 +338,7 @@ namespace Client
                     }
             }
         }
+
         private void ReceiveMessage()
         {
             while (true)
@@ -413,7 +433,7 @@ namespace Client
                         String stringBalance = tempMessage.Split('~')[2];
                         receivedMessage.Balance = Convert.ToInt32(stringBalance);
 
-                        //Sau đang trong tù hay không?
+                        //đang trong tù hay không?
                         String stringInJail = tempMessage.Split('~')[3];
                         switch (stringInJail)
                         {
@@ -464,21 +484,21 @@ namespace Client
                             InJail(CurrentPlayerId);
                         }
 
-                        if (Players[CurrentPlayerId].Loser || Players[CurrentPlayerId].Balance <= 0) 
+                        if (Players[CurrentPlayerId].Loser || Players[CurrentPlayerId].Balance < 0) 
                             Lose();
                         int count = 0;
                         for (var u = 0; u < 2; u++)
                         {
                             if (Players[u].Loser) count++;
                             if (Players[CurrentPlayerId].Loser || count < 1) continue;
-                            currentPlayersTurn_textbox.Text = "You won!";
+                            currentPlayersTurn_textbox.Text = "Bạn thắng!";
                             switch (CurrentPlayerId)
                             {
                                 case 0:
-                                    if (MessageBox.Show("Red player has won!", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
+                                    if (MessageBox.Show("Đỏ, bạn đã thắng", "Thông báo", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
                                     break;
                                 case 1:
-                                    if (MessageBox.Show("Blue player has won!", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
+                                    if (MessageBox.Show("Xanh, bạn đã thắng", "Thông báo", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
                                     break;
                             }
                         }
@@ -727,14 +747,14 @@ namespace Client
             {
                 if (Players[i].Loser) count++;
                 if (Players[CurrentPlayerId].Loser || count < 1) continue;
-                currentPlayersTurn_textbox.Text = "You won! Congratulations!";
+                currentPlayersTurn_textbox.Text = "Bạn thắng! Congratulations!";
                 switch (CurrentPlayerId)
                 {
                     case 0:
-                        if (MessageBox.Show("Red player has won!", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
+                        if (MessageBox.Show("Đỏ, bạn đã thắng", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
                         break;
                     case 1:
-                        if (MessageBox.Show("Blue player has won!", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
+                        if (MessageBox.Show("Xanh, bạn đã thắng", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
                         break;
                 }
             }
@@ -819,14 +839,14 @@ namespace Client
                 {
                     if (Players[i].Loser) count++;
                     if (Players[CurrentPlayerId].Loser || count < 1) continue;
-                    currentPlayersTurn_textbox.Text = "You won!";
+                    currentPlayersTurn_textbox.Text = "Bạn thắng!";
                     switch (CurrentPlayerId)
                     {
                         case 0:
-                            if (MessageBox.Show("Red player has won!", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
+                            if (MessageBox.Show("Đỏ, bạn đã thắng", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
                             break;
                         case 1:
-                            if (MessageBox.Show("Blue player has won!", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
+                            if (MessageBox.Show("Xanh, bạn đã thắng", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
                             break;
                     }
                 }
@@ -895,14 +915,14 @@ namespace Client
                 {
                     if (Players[i].Loser) count++;
                     if (Players[CurrentPlayerId].Loser || count < 1) continue;
-                    currentPlayersTurn_textbox.Text = "You won!";
+                    currentPlayersTurn_textbox.Text = "Bạn thắng!";
                     switch (CurrentPlayerId)
                     {
                         case 0:
-                            if (MessageBox.Show("Red player has won!", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
+                            if (MessageBox.Show("Đỏ, bạn đã thắng", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
                             break;
                         case 1:
-                            if (MessageBox.Show("Blue player has won!", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
+                            if (MessageBox.Show("Xanh, bạn đã thắng", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
                             break;
                     }
                 }
