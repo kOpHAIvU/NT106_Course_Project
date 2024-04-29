@@ -9,6 +9,11 @@ các loại message được gửi
 
 "Quân tốt Xanh đã được chọn"
 
+"Trả tiền thuê nhà cho Đỏ: " + tiền
+
+"Trả tiền thuê nhà cho Xanh: " + tiền
+
+
 Header "Kết quả lượt đi" -> "của Đỏ" || "của Xanh"
 "EndPosition~Balance~InJail~Jail~stringPropertiesOwned~Loser"
 

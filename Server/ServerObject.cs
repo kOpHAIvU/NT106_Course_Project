@@ -26,7 +26,7 @@ namespace Server
         {
             try
             {
-                tcpListener = new TcpListener(IPAddress.Any, 8888);
+                tcpListener = new TcpListener(IPAddress.Parse("127.0.0.1"), 8888);
                 tcpListener.Start();
                 Program.f.tbLog.Invoke((MethodInvoker)delegate
                 {

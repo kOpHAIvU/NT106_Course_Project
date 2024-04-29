@@ -15,9 +15,11 @@ namespace Client
         private void btnConnect_Click(object sender, EventArgs e)
         {
             //Lấy giá trị cổng từ ô insertPort và gán cho biến Port trong class ConnectionOptions
-            ConnectionOptions.Port = Convert.ToInt32(insertPort.Text);
+            ConnectionOptions.Port = 8888;
+            //Convert.ToInt32(insertPort.Text);
             // Lấy địa chỉ IP từ ô insertIP và gán cho biến IP trong class ConnectionOptions
-            ConnectionOptions.IP = insertIP.Text;
+            ConnectionOptions.IP = "127.0.0.1";
+                //insertIP.Text;
             //Gắn cho DialogResult kết quả OK 
             DialogResult = DialogResult.OK;
             Close();
