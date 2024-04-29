@@ -121,12 +121,12 @@ namespace Client
             };
             CreateTile("GO", false, "Null", 0, 0);
             CreateTile("Phú Lâm", true, "Purple", 60, 1);
-            CreateTile("Khí vận", false, "White", 0, 2);
+            CreateTile("Khí vận", false, "Opportunity ", 0, 2);
             CreateTile("Nhà bè Phú Xuân", true, "Purple", 60, 3);
             CreateTile("Thuế lợi tức", false, "White", 0, 4);
             CreateTile("Bến xe Lục Tỉnh", true, "Station", 200, 5);
             CreateTile("Thị Nghè", true, "Turquoise", 100, 6);
-            CreateTile("Cơ hội", false, "White", 0, 7);
+            CreateTile("Cơ hội", false, "Opportunity ", 0, 7);
             CreateTile("Tân Định", true, "Turquoise", 100, 8);
             CreateTile("Bến Chương Dương", true, "Turquoise", 120, 9);
             CreateTile("Thăm tù", false, "Null", 0, 10);
@@ -136,12 +136,12 @@ namespace Client
             CreateTile("Lý Thái Tổ", true, "Pink", 160, 14);
             CreateTile("Bến xe Lam Chợ Lớn", true, "Station", 200, 15);
             CreateTile("Đại lộ Hùng Vương", true, "Orange", 180, 16);
-            CreateTile("Khí vận", false, "White", 0, 17);
+            CreateTile("Khí vận", false, "Opportunity ", 0, 17);
             CreateTile("Gia Long", true, "Orange", 180, 18);
             CreateTile("Bến Bạch Đằng", true, "Orange", 200, 19);
             CreateTile("Sân bay", false, "Null", 0, 20);
             CreateTile("Đường Công Lý", true, "Red", 220, 21);
-            CreateTile("Cơ hội", false, "White", 0, 22);
+            CreateTile("Cơ hội", false, "Opportunity ", 0, 22);
             CreateTile("Đại lộ thống nhất", true, "Red", 220, 23);
             CreateTile("Đại lộ Cộng Hòa", true, "Red", 240, 24);
             CreateTile("Bến xe An Đông", false, "Station", 200, 25);
@@ -152,13 +152,14 @@ namespace Client
             CreateTile("VÔ TÙ", false, "Null", 0, 30);
             CreateTile("Phan Thanh Giảm", true, "Green", 300, 31);
             CreateTile("Lê Văn Duyệt", true, "Green", 300, 32);
-            CreateTile("Khí vận", false, "White", 0, 33);
+            CreateTile("Khí vận", false, "Opportunity ", 0, 33);
             CreateTile("Nguyễn Thái Học", true, "Green", 320, 34);
             CreateTile("Tân Kì Tân Quý", false, "White", 0, 35);
-            CreateTile("Cơ hội", false, "White", 0, 36);
+            CreateTile("Cơ hội", false, "Opportunity ", 0, 36);
             CreateTile("Nha Trang", true, "Blue", 350, 37);
             CreateTile("Thuế lương bổng", false, "White", 0, 38);
             CreateTile("Cố Đô Huế", true, "Blue", 400, 39);
+
             Players[0] = new Player();
             Players[1] = new Player();
             #endregion
@@ -178,6 +179,7 @@ namespace Client
             };
             Properties[tilePosition] = property;
         }
+
         private string PropertiesToString(int[] propertyList)
         {
             var tempString = "";
@@ -186,20 +188,23 @@ namespace Client
                     tempString = tempString + Properties[propertyList[i]].Name + ", " + Properties[propertyList[i]].Color + "\n";
             return tempString;
         }
+
         private void UpdatePlayersStatusBoxes()
         {
             redPlayerStatusBox_richtextbox.Text = "Red player" + "\n"
-                + "Balance: " + Players[0].Balance + "\n"
+                + "Tiền còn lại: " + Players[0].Balance + "\n"
                 + PropertiesToString(Players[0].PropertiesOwned);
             bluePlayerStatusBox_richtextbox.Text = "Blue player" + "\n"
-                + "Balance: " + Players[1].Balance + "\n"
+                + "Tiền còn lại: " + Players[1].Balance + "\n"
                 + PropertiesToString(Players[1].PropertiesOwned);
         }
+
         private void ChangeBalance(Player player, int cashChange)
         {
             player.Balance += cashChange;
             UpdatePlayersStatusBoxes();
         }
+
         private void InJail(int currentPlayer)
         {
             Players[currentPlayer].Jail += 1;
@@ -209,11 +214,10 @@ namespace Client
             {
                 case 0:
                     currentPlayersTurn_textbox.Text =
-                        "Red player, you are in jail!\r\nYou can move next turn. ";
-                    break;
+                        "Người chơi màu đỏ, bạn đang ở trong tù!\r\nSẽ được di chuyển ở lượt tiếp. "; break;
                 case 1:
                     currentPlayersTurn_textbox.Text =
-                        "Blue player, you are in jail!\r\nYou can move next turn. ";
+                        "Người chơi màu xanh, bạn đang ở trong tù!\r\nSẽ được di chuyển ở lượt tiếp. ";
                     break;
             }
             if (Players[currentPlayer].Jail != 3) return;
@@ -224,11 +228,11 @@ namespace Client
             {
                 case 0:
                     currentPlayersTurn_textbox.Text =
-                        "Red player, you are free! ";
+                        "Đỏ, bạn đã được thả! ";
                     break;
                 case 1:
                     currentPlayersTurn_textbox.Text =
-                        "Blue player, you are free! ";
+                        "Xanh, bạn đã được thả! ";
                     break;
             }
         }
@@ -243,6 +247,9 @@ namespace Client
                     Properties[CurrentPosition].Rent = dice * 20;
                     break;
                 case "White":
+                    Properties[CurrentPosition].Rent = 0;
+                    break;
+                case "Opportunity ":
                     Properties[CurrentPosition].Rent = 0;
                     break;
                 case "Purple":
@@ -272,6 +279,7 @@ namespace Client
             }
             return Properties[CurrentPosition].Rent;
         }
+
         private void DrawCircle(int position, int playerId)
         {
             int x = Tile[position].Location.X, y = Tile[position].Location.Y;
@@ -316,87 +324,97 @@ namespace Client
             while (true)
                 try
                 {
-                    var data = new byte[256];
-                    var builder = new StringBuilder();
+                    byte[] data = new byte[256];
+                    StringBuilder builder = new StringBuilder();
                     do
                     {
                         var bytes = Stream.Read(data, 0, data.Length);
                         builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
-                    }
-                    while (Stream.DataAvailable);
-                    var message = builder.ToString();
+                    } while (Stream.DataAvailable);
+
+                    String message = builder.ToString();
                     switch (message)
                     {
-                        case "Both players has connected":
+                        case "Cả 2 người chơi đã kết nối":
                             {
                                 switch (ConnectionOptions.PlayerName)
                                 {
                                     case "Red":
-                                        currentPlayersTurn_textbox.Text = "Throw dices to start the game";
+                                        currentPlayersTurn_textbox.Text = "Tung xúc sắc để bất đầu trò chơi";
                                         throwDiceBtn.Enabled = true;
                                         buyBtn.Enabled = false;
                                         endTurnBtn.Enabled = true;
                                         break;
                                     case "Blue":
-                                        currentPlayersTurn_textbox.Text = "Red player is making his turn right now, wait";
+                                        currentPlayersTurn_textbox.Text = "Đỏ đang thực hiện lượt chơi. Chờ...";
                                         break;
                                 }
                                 break;
                             }
-                        case "Red has connected":
+                        case "Đỏ đã kết nối":
                             {
                                 RedConnected = true;
                                 ConnectionOptions.NameRedIsTaken = true;
                                 if (!BlueConnected) continue;
-                                Stream.Write(Encoding.Unicode.GetBytes("Both players has connected"), 0, Encoding.Unicode.GetBytes("Both players has connected").Length);
+                                Stream.Write(Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối"), 0, Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối").Length);
                                 break;
                             }
-                        case "Blue has connected":
+                        case "Xanh đã kết nối":
                             {
                                 BlueConnected = true;
                                 ConnectionOptions.NameBlueIsTaken = true;
                                 if (!RedConnected) continue;
-                                Stream.Write(Encoding.Unicode.GetBytes("Both players has connected"), 0, Encoding.Unicode.GetBytes("Both players has connected").Length);
+                                Stream.Write(Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối"), 0, Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối").Length);
                                 break;
                             }
-                        case "Red pawn is already selected":
+                        case "Quân tốt Đỏ đã được chọn":
                             {
                                 ConnectionOptions.NameRedIsTaken = true;
                                 break;
                             }
-                        case "Blue pawn is already selected":
+                        case "Quân tốt Xanh đã được chọn":
                             {
                                 ConnectionOptions.NameBlueIsTaken = true;
                                 break;
                             }
                     }
-                    if (message.Contains("Turn results"))
+
+                    if (message.Contains("Kết quả lượt đi"))
                     {
                         var tempMessage = message;
                         var subString = string.Empty;
                         switch (CurrentPlayerId)
                         {
                             case 0:
-                                subString = "Blue player's turn results: ";
+                                subString = "Kết quả lượt đi của Xanh";
                                 break;
                             case 1:
-                                subString = "Red player's turn results: ";
+                                subString = "Kết quả lượt đi của Đỏ";
                                 break;
                         }
                         tempMessage = tempMessage.Replace(subString, "");
+
                         currentPlayersTurn_textbox.Invoke((MethodInvoker)delegate
                         {
-                            currentPlayersTurn_textbox.Text = "Your turn";
+                            currentPlayersTurn_textbox.Text = "Lượt của bạn";
                         });
+
                         throwDiceBtn.Enabled = true;
                         buyBtn.Enabled = false;
                         endTurnBtn.Enabled = true;
-                        var receivedMessage = new ReceivedMessage();
-                        var stringPosition = tempMessage.Split('~')[1];
+                        ReceivedMessage receivedMessage = new ReceivedMessage();
+
+                        //Lấy các trạng thái sau một lượt đi
+                        //Vị trí sau lượt đi
+                        String stringPosition = tempMessage.Split('~')[1];
                         receivedMessage.EndPosition = Convert.ToInt32(stringPosition);
-                        var stringBalance = tempMessage.Split('~')[2];
+
+                        //Tiền sau lượt đi
+                        String stringBalance = tempMessage.Split('~')[2];
                         receivedMessage.Balance = Convert.ToInt32(stringBalance);
-                        var stringInJail = tempMessage.Split('~')[3];
+
+                        //Sau đang trong tù hay không?
+                        String stringInJail = tempMessage.Split('~')[3];
                         switch (stringInJail)
                         {
                             case "TRUE":
@@ -406,15 +424,28 @@ namespace Client
                                 receivedMessage.InJail = false;
                                 break;
                         }
-                        var stringJail = tempMessage.Split('~')[4];
+
+                        //Sau lượt đi có vào tù hay không?
+                        String stringJail = tempMessage.Split('~')[4];
                         receivedMessage.Jail = Convert.ToInt32(stringJail);
-                        var stringPropertiesOwned = tempMessage.Split('~')[5];
+
+                        //Tài sản (đất) hiện có
+                        String stringPropertiesOwned = tempMessage.Split('~')[5];
                         if (stringPropertiesOwned != "NULL")
                         {
-                            var tempArrayOfPropertiesOwned = stringPropertiesOwned.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => int.Parse(x)).ToArray();
-                            for (var k = 0; k < tempArrayOfPropertiesOwned.Length; k++) receivedMessage.PropertiesOwned[k] = tempArrayOfPropertiesOwned[k];
+                            //Lấy mã số của các nhà được sở hữu
+                            int[] tempArrayOfPropertiesOwned = stringPropertiesOwned
+                                .Split(' ')
+                                .Where(x => !string
+                                .IsNullOrWhiteSpace(x))
+                                .Select(x => int.Parse(x))
+                                .ToArray();
+                            for (int k = 0; k < tempArrayOfPropertiesOwned.Length; k++) 
+                                receivedMessage.PropertiesOwned[k] = tempArrayOfPropertiesOwned[k];
                         }
-                        var stringLoser = tempMessage.Split('~')[6];
+
+                        //Kiểm tra người chơi kia có thua không
+                        String stringLoser = tempMessage.Split('~')[6];
                         switch (stringLoser)
                         {
                             case "TRUE":
@@ -424,6 +455,7 @@ namespace Client
                                 receivedMessage.Loser = false;
                                 break;
                         }
+
                         if (Players[CurrentPlayerId].InJail)
                         {
                             CurrentPosition = 10;
@@ -431,8 +463,10 @@ namespace Client
                             Players[CurrentPlayerId].Position = CurrentPosition;
                             InJail(CurrentPlayerId);
                         }
-                        if (Players[CurrentPlayerId].Loser || Players[CurrentPlayerId].Balance <= 0) Lose();
-                        var count = 0;
+
+                        if (Players[CurrentPlayerId].Loser || Players[CurrentPlayerId].Balance <= 0) 
+                            Lose();
+                        int count = 0;
                         for (var u = 0; u < 2; u++)
                         {
                             if (Players[u].Loser) count++;
@@ -801,10 +835,10 @@ namespace Client
                 switch (CurrentPlayerId)
                 {
                     case 0:
-                        turnLogString = "Red player's turn results: ";
+                        turnLogString = "Kết quả lượt đi của Đỏ";
                         break;
                     case 1:
-                        turnLogString = "Blue player's turn results: ";
+                        turnLogString = "Kết quả lượt đi của Xanh";
                         break;
                 }
                 turnLogString += CurrentPlayerId.ToString() + '~'
