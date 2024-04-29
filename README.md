@@ -14,7 +14,7 @@ các loại message được gửi
 "Trả tiền thuê nhà cho Xanh: " + tiền
 
 
-Header "Kết quả lượt đi" -> "của Đỏ" || "của Xanh"
+Header "Kết quả lượt đi " -> "của Đỏ" || "của Xanh"
 "EndPosition~Balance~InJail~Jail~stringPropertiesOwned~Loser"
 
 InJail là trong trạng thái ở Tù

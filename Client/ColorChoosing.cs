@@ -11,7 +11,7 @@ namespace Client
             InitializeComponent();
 
             //Thiết lập giá trị mặc định cho tbColor
-            tbColor.Text = "Not chosen";
+            tbColor.Text = "Chưa được chọn";
 
             //Kiểm tra nếu màu đỏ/ xanh đã được chọn, thì không cho chọn màu đỏ/ xanh nữa
             if (ConnectionOptions.NameRedIsTaken) chooseRedPlayerBtn.Enabled = false;
@@ -22,27 +22,27 @@ namespace Client
             switch (tbColor.Text)
             {
                 //Nếu chọn màu đỏ 
-                case "Red":
+                case "Đỏ":
                     //Gán tên người chơi là Red 
-                    ConnectionOptions.PlayerName = "Red";
+                    ConnectionOptions.PlayerName = "Đỏ";
                     //Cho biết tên màu đỏ đã được chọn
                     ConnectionOptions.NameRedIsTaken = true;
                     Close();
                     DialogResult = DialogResult.OK;
                     break;
                  //Nếu chọn màu xanh
-                case "Blue":
+                case "Xanh":
                     //Gán tên người chơi là Blue
-                    ConnectionOptions.PlayerName = "Blue";
+                    ConnectionOptions.PlayerName = "Xanh";
                     //Cho biết tên màu xanh đã được chọn
                     ConnectionOptions.NameBlueIsTaken = true;
                     Close();
                     //Gắn cho DialogResult kết quả OK 
                     DialogResult = DialogResult.OK;
                     break;
-                case "Not chosen":
+                case "Chưa chọn":
                     //Nếu chưa chọn màu thì hiển thị thông báo yêu cầu chọn màu 
-                    MessageBox.Show("Choose color!");
+                    MessageBox.Show("Chọn màu!");
                     break;
             }
         }

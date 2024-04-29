@@ -26,10 +26,12 @@ namespace Server
                 Stream = Client.GetStream();
                 while (true)
                 {
+                    // nghe "NONSTOP 2024 TIKTOK - NHẠC REMIX HOT TREND NHẤT TIKTOK 2024 - NONSTOP VINAHOUSE 2024 BASS CỰC CĂNG" đi @VinhPham
+                    //điếc tai ê còn j nx kh t i tém cái :))) đm gội đầu nữa hmmm suy nghĩ công việc cho t đuy :))) 
                     var message = GetMessage();
                     switch (message)
                     {
-                        case "Both players has connected":
+                        case "Cả 2 người chơi đã kết nối":
                             {
                                 server.SendMessageToEveryone(message, Id);
                                 Program.f.tbLog.Invoke((MethodInvoker)delegate
@@ -38,48 +40,39 @@ namespace Server
                                 });
                                 break;
                             }
-                        case "Red":
+                        case "Đỏ đã kết nối":
                             {
                                 Taken.Red = true;
                                 userName = message;
                                 Program.f.tbLog.Invoke((MethodInvoker)delegate
                                 {
-                                    Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName + " has connected" + Environment.NewLine;
+                                    Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName + " đã kết nối" + Environment.NewLine;
                                 });
-                                server.SendMessageToOpponentClient(userName + " has connected", Id);
+                                server.SendMessageToOpponentClient(userName + " đã kết nối", Id);
                                 break;
                             }
-                        case "Blue":
+                        case "Xanh đã kết nối":
                             {
                                 Taken.Blue = true;
                                 userName = message;
                                 Program.f.tbLog.Invoke((MethodInvoker)delegate
                                 {
-                                    Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName + " has connected" + Environment.NewLine;
+                                    Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName + " đã kết nối" + Environment.NewLine;
                                 });
-                                server.SendMessageToOpponentClient(userName + " has connected", Id);
+                                server.SendMessageToOpponentClient(userName + " đã kết nối", Id);
                                 break;
                             }
-                        case "Someone has connected":
+                        case "Người chơi mới đã vào":
                             {
                                 Program.f.tbLog.Invoke((MethodInvoker)delegate
                                 {
                                     Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
                                 });
-                                if (Taken.Red) server.SendMessageToSender("Red pawn is already selected", Id);
-                                if (Taken.Blue) server.SendMessageToSender("Blue pawn is already selected", Id);
+                                if (Taken.Red) server.SendMessageToSender("Quân tốt Đỏ đã được chọn", Id);
+                                if (Taken.Blue) server.SendMessageToSender("Quân tốt Xanh đã được chọn", Id);
                                 break;
                             }
-                        case "Red pawn is already selected":
-                            {
-                                server.SendMessageToOpponentClient(message, Id);
-                                Program.f.tbLog.Invoke((MethodInvoker)delegate
-                                {
-                                    Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
-                                });
-                                break;
-                            }
-                        case "Blue pawn is already selected":
+                        case "Quân tốt Đỏ đã được chọn":
                             {
                                 server.SendMessageToOpponentClient(message, Id);
                                 Program.f.tbLog.Invoke((MethodInvoker)delegate
@@ -88,7 +81,16 @@ namespace Server
                                 });
                                 break;
                             }
-                        case "Red has left" when userName is "Red":
+                        case "Quân tốt Xanh đã được chọn":
+                            {
+                                server.SendMessageToOpponentClient(message, Id);
+                                Program.f.tbLog.Invoke((MethodInvoker)delegate
+                                {
+                                    Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
+                                });
+                                break;
+                            }
+                        case "Đỏ đã rời" when userName is "Đỏ":
                             {
                                 Program.f.tbLog.Invoke((MethodInvoker)delegate
                                 {
@@ -97,7 +99,7 @@ namespace Server
                                 server.RemoveConnection(this.Id);
                                 break;
                             }
-                        case "Blue has left" when userName is "Blue":
+                        case "Xanh đã rời" when userName is "Xanh":
                             {
                                 Program.f.tbLog.Invoke((MethodInvoker)delegate
                                 {
@@ -107,25 +109,25 @@ namespace Server
                                 break;
                             }
                     }
-                    if (message.Contains("Red player's turn results"))
+                    if (message.Contains("Kết quả lượt đi của Đỏ"))
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
                         {
-                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Red player has finished his turn" + Environment.NewLine;
-                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Blue player's turn" + Environment.NewLine;
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đỏ đã hoàn thành lượt đi" + Environment.NewLine;
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đến lượt của Xanh" + Environment.NewLine;
                         });
                         server.SendMessageToOpponentClient(message, Id);
                     }
-                    if (message.Contains("Blue player's turn results"))
+                    if (message.Contains("Kết quả lượt đi của Xanh"))
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
                         {
-                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Blue player has finished his turn" + Environment.NewLine;
-                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Red player's turn" + Environment.NewLine;
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Xanh đã hoàn thành lượt đi" + Environment.NewLine;
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đến lượt của Đỏ" + Environment.NewLine;
                         });
                         server.SendMessageToOpponentClient(message, Id);
                     }
-                    if (message.Contains("Rent"))
+                    if (message.Contains("thuê"))
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
                         {
@@ -145,8 +147,8 @@ namespace Server
         }
         private string GetMessage()
         {
-            var data = new byte[256];
-            var builder = new StringBuilder();
+            byte[] data = new byte[256];
+            StringBuilder builder = new StringBuilder();
             do
             {
                 builder.Append(Encoding.Unicode.GetString(data, 0,
