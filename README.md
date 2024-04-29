@@ -20,3 +20,8 @@ Header "Kết quả lượt đi" -> "của Đỏ" || "của Xanh"
 InJail là trong trạng thái ở Tù
 Jail là bị ở tù
 stringPropertiesOwned là chuỗi các nhà đối phương sở hữu
+
+Các luật thay đổi
+- Phải ở tù 3 lượt mới được ra
+- Các bến xe phải đóng = số lần tung xúc sắc * 20
+- Không thêm biệt thự được

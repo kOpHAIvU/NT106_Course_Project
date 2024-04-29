@@ -424,7 +424,7 @@ namespace Client
                                 break;
                             }
                     }
-                    //Khi nhận được kết quả lươt đi 
+                    //Khi nhận được kết quả lượt đi 
                     //Xử lý thông tin nhận được và cập nhật kết quả cho người 
                     if (message.Contains("Kết quả lượt đi"))
                     {
@@ -632,12 +632,17 @@ namespace Client
                     Disconnect();
                 }
         }
+
+        //Hàm được gọi khi người chơi thua cuộc
         private void Lose()
         {
+            //Đánh dấu người chơi hiện tại thua cuộc 
             Players[CurrentPlayerId].Loser = true;
+            //Vô hiệu hóa các nút chơi 
             throwDiceBtn.Enabled = false;
             buyBtn.Enabled = false;
             endTurnBtn.Enabled = false;
+            //Hiển thị thông báo về sự thua cuộc của người chơi 
             switch (CurrentPlayerId)
             {
                 case 0 when Players[0].Loser:
@@ -648,17 +653,23 @@ namespace Client
                     break;
             }
         }
+        //Phương thức ngắt kết nối và thoát ứng dụng 
         private static void Disconnect()
         {
+            //Đống luồng dữ liệu 
             Stream?.Close();
+            //Đóng kết nối của client 
             Client?.Close();
+            //Thoát khỏi ứng dụng
             Environment.Exit(0);
         }
+        //Phương thức di chiển biểu tượng của người chơi
         private void MoveIcon(int position)
         {
             int x, y;
             switch (CurrentPlayerId)
             {
+                //Lấy tọa độ mới cho biểu tượng màu đỏ/ xanh và di chuyển đến tọa độ mới 
                 case 0:
                     x = Tile[position].Location.X;
                     y = Tile[position].Location.Y;
@@ -851,8 +862,10 @@ namespace Client
                 }
             }
 
+            //Nếu đất này chưa được mua hoặc bản thân đang sở hữu thì kết thúc hàm
             if (Players[CurrentPlayerId].PropertiesOwned[CurrentPosition] == CurrentPosition || !Properties[CurrentPosition].Owned) 
                 return;
+            //Nếu đất của đối phương thì sẽ thực hiện trả tiền cho đối phương
             buyBtn.Enabled = false;
             switch (CurrentPlayerId)
             {
@@ -861,7 +874,7 @@ namespace Client
                     ChangeBalance(Players[1], GetRent(Dice));
                     if (Gamemodes.Multiplayer)
                     {
-                        var rentMessage = "Trả tiền thuê nhà cho Xanh: " + GetRent(Dice);
+                        string rentMessage = "Trả tiền thuê nhà cho Xanh: " + GetRent(Dice);
                         MessageBox.Show("Đỏ trả tiền thuê nhà cho Xanh: " + GetRent(Dice));
                         Stream.Write(Encoding.Unicode.GetBytes(rentMessage), 0, Encoding.Unicode.GetBytes(rentMessage).Length);
                     }
@@ -871,7 +884,7 @@ namespace Client
                     ChangeBalance(Players[0], GetRent(Dice));
                     if (Gamemodes.Multiplayer)
                     {
-                        var rentMessage = "Trả tiền thuê nhà cho Đỏ: : " + GetRent(Dice);
+                        string rentMessage = "Trả tiền thuê nhà cho Đỏ: : " + GetRent(Dice);
                         MessageBox.Show("Xanh trả tiền thuê nhà cho Đỏ: : " + GetRent(Dice));
                         Stream.Write(Encoding.Unicode.GetBytes(rentMessage), 0, Encoding.Unicode.GetBytes(rentMessage).Length);
                     }
@@ -880,15 +893,17 @@ namespace Client
             switch (CurrentPlayerId)
             {
                 case 0:
-                    currentPlayersTurn_textbox.Text = "Red player, you landed on another player's tile and payed ";
+                    currentPlayersTurn_textbox.Text = "Đỏ, bạn vừa vào đất của người chơi khác và phải đóng tiền ";
                     break;
                 case 1:
-                    currentPlayersTurn_textbox.Text = "Blue player, you landed on another player's tile and payed ";
+                    currentPlayersTurn_textbox.Text = "Xanh, bạn vừa vào đất của người chơi khác và phải đóng tiền ";
                     break;
             }
-            if (CurrentPosition is 5 || CurrentPosition is 15 || CurrentPosition is 25 || CurrentPosition is 35) currentPlayersTurn_textbox.Text += Dice * 20;
+            if (CurrentPosition is 5 || CurrentPosition is 15 || CurrentPosition is 25 || CurrentPosition is 35) 
+                currentPlayersTurn_textbox.Text += Dice * 20;
             else currentPlayersTurn_textbox.Text += Properties[CurrentPosition].Rent;
         }
+
         private void BuyBtn_Click(object sender, EventArgs e)
         {
             if (Properties[CurrentPosition].Buyable && Properties[CurrentPosition].Owned is false)
