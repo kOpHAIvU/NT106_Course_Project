@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.Linq;
 using System.Net.Sockets;
@@ -424,6 +425,14 @@ namespace Client
                                 break;
                             }
                     }
+                   
+                    //Xử lý tin nhắn
+
+                    if (message.Contains("Đỏ nhắn : ") || message.Contains("Xanh nhắn : "))
+                    {
+                        UpdateChatBox(message);
+                    } 
+                    
                     //Khi nhận được kết quả lượt đi 
                     //Xử lý thông tin nhận được và cập nhật kết quả cho người 
                     if (message.Contains("Kết quả lượt đi"))
@@ -682,6 +691,33 @@ namespace Client
                     break;
             }
         }
+
+        private void sendBt_Click(object sender, EventArgs e)
+        {
+            string message = messageTb.Text.Trim();
+            if (string.IsNullOrEmpty(message))
+            {
+                MessageBox.Show("Vui lòng điền vào TextBox trước khi gửi", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            Stream.Write(Encoding.Unicode.GetBytes("nhắn : " + message), 0, Encoding.Unicode.GetBytes("nhắn : " + message).Length);
+            messageTb.Text = "";
+        }
+
+        private void UpdateChatBox(string message)
+        {
+            if (chatListBox.InvokeRequired)
+            {
+                chatListBox.Invoke(new Action<string>(UpdateChatBox), message);
+            }
+            else
+            {
+                chatListBox.Items.Add(message);
+            }
+        }
+
+
 
         //Animation di chuyển vị trí
         private async Task<int> MoveTileByTile(int from, int to)

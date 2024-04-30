@@ -109,6 +109,12 @@ namespace Server
                                 break;
                             }
                     }
+
+                    if (message.Contains("nhắn : "))
+                    {
+                        server.SendMessageToEveryone( userName + " " + message,Id);
+                    }
+
                     if (message.Contains("Kết quả lượt đi của Đỏ"))
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
@@ -134,7 +140,7 @@ namespace Server
                             Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
                         });
                         server.SendMessageToOpponentClient(message, Id);
-                    }
+                    }    
                 }
             }
             catch (Exception e)
