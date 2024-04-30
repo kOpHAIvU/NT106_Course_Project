@@ -750,7 +750,7 @@
             // 
             this.messageTb.Location = new System.Drawing.Point(97, 190);
             this.messageTb.Name = "messageTb";
-            this.messageTb.Size = new System.Drawing.Size(295, 32);
+            this.messageTb.Size = new System.Drawing.Size(295, 37);
             this.messageTb.TabIndex = 113;
             // 
             // chatListBox
@@ -761,7 +761,7 @@
             this.chatListBox.Size = new System.Drawing.Size(295, 97);
             this.chatListBox.TabIndex = 114;
             this.chatListBox.UseCompatibleStateImageBehavior = false;
-            this.chatListBox.View = System.Windows.Forms.View.List;
+            this.chatListBox.View = System.Windows.Forms.View.Details;
             // 
             // sendBt
             // 

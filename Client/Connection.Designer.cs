@@ -29,28 +29,16 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connection));
-            this.insertPort = new System.Windows.Forms.TextBox();
             this.insertIP = new System.Windows.Forms.TextBox();
             this.btnChooseColor = new System.Windows.Forms.Button();
             this.returnBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // insertPort
-            // 
-            this.insertPort.BackColor = System.Drawing.Color.White;
-            this.insertPort.ForeColor = System.Drawing.Color.Black;
-            this.insertPort.Location = new System.Drawing.Point(165, 286);
-            this.insertPort.MaxLength = 15;
-            this.insertPort.Multiline = true;
-            this.insertPort.Name = "insertPort";
-            this.insertPort.Size = new System.Drawing.Size(282, 29);
-            this.insertPort.TabIndex = 15;
-            // 
             // insertIP
             // 
             this.insertIP.BackColor = System.Drawing.Color.White;
             this.insertIP.ForeColor = System.Drawing.Color.Black;
-            this.insertIP.Location = new System.Drawing.Point(165, 224);
+            this.insertIP.Location = new System.Drawing.Point(165, 240);
             this.insertIP.MaxLength = 15;
             this.insertIP.Multiline = true;
             this.insertIP.Name = "insertIP";
@@ -94,11 +82,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 31F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.BackgroundImage = global::Client.Properties.Resources.hin02;
+            this.BackgroundImage = global::Client.Properties.Resources.hin05;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(587, 398);
             this.Controls.Add(this.returnBtn);
-            this.Controls.Add(this.insertPort);
             this.Controls.Add(this.insertIP);
             this.Controls.Add(this.btnChooseColor);
             this.DoubleBuffered = true;
@@ -117,7 +104,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.TextBox insertPort;
         private System.Windows.Forms.TextBox insertIP;
         private System.Windows.Forms.Button btnChooseColor;
         private System.Windows.Forms.Button returnBtn;
