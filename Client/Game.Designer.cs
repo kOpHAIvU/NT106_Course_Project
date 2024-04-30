@@ -83,6 +83,9 @@
             this.redDot_picturebox = new System.Windows.Forms.PictureBox();
             this.blueDot_picturebox = new System.Windows.Forms.PictureBox();
             this.pbControlMenu = new System.Windows.Forms.PictureBox();
+            this.messageTb = new System.Windows.Forms.TextBox();
+            this.chatListBox = new System.Windows.Forms.ListView();
+            this.sendBt = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.redPawnIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bluePawnIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tile0)).BeginInit();
@@ -735,12 +738,42 @@
             this.pbControlMenu.TabIndex = 112;
             this.pbControlMenu.TabStop = false;
             // 
+            // messageTb
+            // 
+            this.messageTb.Location = new System.Drawing.Point(97, 190);
+            this.messageTb.Name = "messageTb";
+            this.messageTb.Size = new System.Drawing.Size(295, 32);
+            this.messageTb.TabIndex = 113;
+            // 
+            // chatListBox
+            // 
+            this.chatListBox.HideSelection = false;
+            this.chatListBox.Location = new System.Drawing.Point(94, 87);
+            this.chatListBox.Name = "chatListBox";
+            this.chatListBox.Size = new System.Drawing.Size(295, 97);
+            this.chatListBox.TabIndex = 114;
+            this.chatListBox.UseCompatibleStateImageBehavior = false;
+            this.chatListBox.View = System.Windows.Forms.View.List;
+            // 
+            // sendBt
+            // 
+            this.sendBt.Location = new System.Drawing.Point(395, 184);
+            this.sendBt.Name = "sendBt";
+            this.sendBt.Size = new System.Drawing.Size(64, 42);
+            this.sendBt.TabIndex = 115;
+            this.sendBt.Text = "Send";
+            this.sendBt.UseVisualStyleBackColor = true;
+            this.sendBt.Click += new System.EventHandler(this.sendBt_Click);
+            // 
             // Game
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackgroundImage = global::Client.Properties.Resources.hin;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1258, 664);
+            this.Controls.Add(this.sendBt);
+            this.Controls.Add(this.chatListBox);
+            this.Controls.Add(this.messageTb);
             this.Controls.Add(this.redDot_picturebox);
             this.Controls.Add(this.blueDot_picturebox);
             this.Controls.Add(this.redPawnIcon);
@@ -911,5 +944,8 @@
         private System.Windows.Forms.PictureBox redDot_picturebox;
         private System.Windows.Forms.PictureBox blueDot_picturebox;
         private System.Windows.Forms.PictureBox pbControlMenu;
+        private System.Windows.Forms.TextBox messageTb;
+        private System.Windows.Forms.ListView chatListBox;
+        private System.Windows.Forms.Button sendBt;
     }
 }
