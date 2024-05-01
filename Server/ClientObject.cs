@@ -103,7 +103,7 @@ namespace Server
                     //        server.RemoveConnection(this.Id);
                     //        break;
                     //    }
-                    if (message.Contains("nhắn : "))
+                    if (message.Contains("nhắn: "))
                     {
                         server.SendMessageToEveryone(userName + " " + message, Id);
                     }

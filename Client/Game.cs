@@ -625,7 +625,7 @@ namespace Client
                     //Cập nhật số tiền cho người chơi 
                     if (message.Contains("Trả tiền thuê nhà cho Đỏ: ") && parts[0] == ConnectionOptions.Room)
                     {
-                        string sumOfRentString = message.Replace("Trả tiền thuê nhà cho Đỏ: : ", "");
+                        string sumOfRentString = parts[parts.Length-1];
                         int sumOfRent = Convert.ToInt32(sumOfRentString);
                         ChangeBalance(Players[1], -sumOfRent);
                         ChangeBalance(Players[0], sumOfRent);
@@ -633,7 +633,7 @@ namespace Client
                     }
                     else if (message.Contains("Trả tiền thuê nhà cho Xanh: ")&& parts[0] == ConnectionOptions.Room)
                     {
-                        string sumOfRentString = message.Replace("Trả tiền thuê nhà cho Xanh: ", "");
+                        string sumOfRentString = parts[parts.Length - 1];
                         int sumOfRent = Convert.ToInt32(sumOfRentString);
                         ChangeBalance(Players[0], -sumOfRent);
                         ChangeBalance(Players[1], sumOfRent);
@@ -706,7 +706,7 @@ namespace Client
                 return;
             }
 
-            Stream.Write(Encoding.Unicode.GetBytes("nhắn : " + message), 0, Encoding.Unicode.GetBytes("nhắn : " + message).Length);
+            Stream.Write(Encoding.Unicode.GetBytes("nhắn: " + message), 0, Encoding.Unicode.GetBytes("nhắn : " + message).Length);
             messageTb.Text = "";
         }
 
