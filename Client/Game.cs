@@ -440,7 +440,7 @@ namespace Client
                     
                     //Khi nhận được kết quả lượt đi 
                     //Xử lý thông tin nhận được và cập nhật kết quả cho người 
-                    if (message.Contains("Kết quả lượt đi"))
+                    if (message.Contains("Kết quả lượt đi") && parts[0] == ConnectionOptions.Room)
                     {
                         var tempMessage = message;
                         var subString = string.Empty;
@@ -623,7 +623,7 @@ namespace Client
                         }
                     }
                     //Cập nhật số tiền cho người chơi 
-                    if (message.Contains("Trả tiền thuê nhà cho Đỏ: "))
+                    if (message.Contains("Trả tiền thuê nhà cho Đỏ: ") && parts[0] == ConnectionOptions.Room)
                     {
                         string sumOfRentString = message.Replace("Trả tiền thuê nhà cho Đỏ: : ", "");
                         int sumOfRent = Convert.ToInt32(sumOfRentString);
@@ -631,7 +631,7 @@ namespace Client
                         ChangeBalance(Players[0], sumOfRent);
                         MessageBox.Show("Xanh trả tiền thuê nhà cho Đỏ: : " + sumOfRent);
                     }
-                    else if (message.Contains("Trả tiền thuê nhà cho Xanh: "))
+                    else if (message.Contains("Trả tiền thuê nhà cho Xanh: ")&& parts[0] == ConnectionOptions.Room)
                     {
                         string sumOfRentString = message.Replace("Trả tiền thuê nhà cho Xanh: ", "");
                         int sumOfRent = Convert.ToInt32(sumOfRentString);
@@ -925,7 +925,7 @@ namespace Client
                     ChangeBalance(Players[1], GetRent(Dice));
                     if (Gamemodes.Multiplayer)
                     {
-                        string rentMessage = "Trả tiền thuê nhà cho Xanh: " + GetRent(Dice);
+                        string rentMessage = ConnectionOptions.Room + " Trả tiền thuê nhà cho Xanh: " + GetRent(Dice);
                         MessageBox.Show("Đỏ trả tiền thuê nhà cho Xanh: " + GetRent(Dice));
                         Stream.Write(Encoding.Unicode.GetBytes(rentMessage), 0, Encoding.Unicode.GetBytes(rentMessage).Length);
                     }
@@ -935,7 +935,7 @@ namespace Client
                     ChangeBalance(Players[0], GetRent(Dice));
                     if (Gamemodes.Multiplayer)
                     {
-                        string rentMessage = "Trả tiền thuê nhà cho Đỏ: : " + GetRent(Dice);
+                        string rentMessage = ConnectionOptions.Room + " Trả tiền thuê nhà cho Đỏ: : " + GetRent(Dice);
                         MessageBox.Show("Xanh trả tiền thuê nhà cho Đỏ: : " + GetRent(Dice));
                         Stream.Write(Encoding.Unicode.GetBytes(rentMessage), 0, Encoding.Unicode.GetBytes(rentMessage).Length);
                     }
@@ -1024,10 +1024,10 @@ namespace Client
                 switch (CurrentPlayerId)
                 {
                     case 0:
-                        turnLogString = "Kết quả lượt đi của Đỏ";
+                        turnLogString = ConnectionOptions.Room + " Kết quả lượt đi của Đỏ";
                         break;
                     case 1:
-                        turnLogString = "Kết quả lượt đi của Xanh";
+                        turnLogString = ConnectionOptions.Room + " Kết quả lượt đi của Xanh";
                         break;
                 }
                 turnLogString += CurrentPlayerId.ToString() + '~'

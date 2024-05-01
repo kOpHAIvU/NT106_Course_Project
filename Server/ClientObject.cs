@@ -13,8 +13,6 @@ namespace Server
         private readonly TcpClient Client;
         private readonly ServerObject server;
         private string userName;
-        private Dictionary<string, List<string>> playRooms = new Dictionary<string, List<string>>();
-        private object locker = new object();
         public ClientObject(TcpClient tcpClient, ServerObject serverObject)
         {
             Id = Guid.NewGuid().ToString();
@@ -87,114 +85,55 @@ namespace Server
                                     Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
                                 });
                             }
-                        //case "Đỏ đã rời" when userName is "Đỏ":
-                        //    {
-                        //        Program.f.tbLog.Invoke((MethodInvoker)delegate
-                        //        {
-                        //            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
-                        //        });
-                        //        server.RemoveConnection(this.Id);
-                        //        break;
-                        //    }
-                        //case "Xanh đã rời" when userName is "Xanh":
-                        //    {
-                        //        Program.f.tbLog.Invoke((MethodInvoker)delegate
-                        //        {
-                        //            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
-                        //        });
-                        //        server.RemoveConnection(this.Id);
-                        //        break;
-                        //    }
-
-                    // Nếu thông điệp bắt đầu từ chữ join thì lập tức yêu cầu tạo phòng chơi cụ thể
-                    if (message.StartsWith("/join"))
+                    //case "Đỏ đã rời" when userName is "Đỏ":
+                    //    {
+                    //        Program.f.tbLog.Invoke((MethodInvoker)delegate
+                    //        {
+                    //            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
+                    //        });
+                    //        server.RemoveConnection(this.Id);
+                    //        break;
+                    //    }
+                    //case "Xanh đã rời" when userName is "Xanh":
+                    //    {
+                    //        Program.f.tbLog.Invoke((MethodInvoker)delegate
+                    //        {
+                    //            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
+                    //        });
+                    //        server.RemoveConnection(this.Id);
+                    //        break;
+                    //    }
+                    if (message.Contains("nhắn : "))
                     {
-                        string[] parts = message.Split(' ');
-                        if (parts.Length == 2)
-                        {
-                            string roomName = parts[1];
-                            lock (locker)
-                            {
-                                //Kiểm tra phòng chat đã tồn tại chưa
-                                if (!playRooms.ContainsKey(roomName))
-                                {
-                                    playRooms.Add(roomName, new List<string>());
-                                }
-                                playRooms[roomName].Add(userName);
-                            }
-                            //Gửi thông điệp vào phòng chat thành công
-                            server.SendMessageToEveryone(userName + " nhắn : Đã tham gia vào phòng " + parts[1], Id);
-                        }
-                        else
-                        {
-                            server.SendMessageToEveryone("Invalid command. Usage: /join [roomName]", Id);
-                        }
-                    }
-                    else
-                    {
-                        string[] parts = message.Split(' ');
+                        server.SendMessageToEveryone(userName + " " + message, Id);
                     }
 
-                    // Check if client is in a specific room
-                    bool isInRoom = false;
-                    string room = null;
-                    lock (locker)
+                    if (message.Contains("Kết quả lượt đi của Đỏ"))
                     {
-                        foreach (var playRoom in playRooms)
+                        Program.f.tbLog.Invoke((MethodInvoker)delegate
                         {
-                            // Nếu tên người chơi có trong danh sách thành viên của một phòng chơi
-                            if (playRoom.Value.Contains(userName))
-                            {
-                                isInRoom = true;
-                                room = playRoom.Key;
-                                break;
-                            }
-                        }
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đỏ đã hoàn thành lượt đi" + Environment.NewLine;
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đến lượt của Xanh" + Environment.NewLine;
+                        });
+                        server.SendMessageToOpponentClient(message, Id);
                     }
-
-                    // Nếu người chơi đang tham gia một phòng chơi cụ thể
-                    if (isInRoom)
+                    if (message.Contains("Kết quả lượt đi của Xanh"))
                     {
-                        lock (locker)
+                        Program.f.tbLog.Invoke((MethodInvoker)delegate
                         {
-                            foreach (var member in playRooms[room])
-                            {
-
-
-                                if (message.Contains("nhắn : "))
-                                {
-                                    server.SendMessageToEveryone(userName + " " + message, Id);
-                                }
-
-                                if (message.Contains("Kết quả lượt đi của Đỏ"))
-                                {
-                                    Program.f.tbLog.Invoke((MethodInvoker)delegate
-                                    {
-                                        Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đỏ đã hoàn thành lượt đi" + Environment.NewLine;
-                                        Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đến lượt của Xanh" + Environment.NewLine;
-                                    });
-                                    server.SendMessageToOpponentClient(message, Id);
-                                }
-                                if (message.Contains("Kết quả lượt đi của Xanh"))
-                                {
-                                    Program.f.tbLog.Invoke((MethodInvoker)delegate
-                                    {
-                                        Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Xanh đã hoàn thành lượt đi" + Environment.NewLine;
-                                        Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đến lượt của Đỏ" + Environment.NewLine;
-                                    });
-                                    server.SendMessageToOpponentClient(message, Id);
-                                }
-                                if (message.Contains("thuê"))
-                                {
-                                    Program.f.tbLog.Invoke((MethodInvoker)delegate
-                                    {
-                                        Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
-                                    });
-                                    server.SendMessageToOpponentClient(message, Id);
-                                }
-                            }
-                        }
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Xanh đã hoàn thành lượt đi" + Environment.NewLine;
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đến lượt của Đỏ" + Environment.NewLine;
+                        });
+                        server.SendMessageToOpponentClient(message, Id);
                     }
+                    if (message.Contains("thuê"))
+                    {
+                        Program.f.tbLog.Invoke((MethodInvoker)delegate
+                        {
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
+                        });
+                        server.SendMessageToOpponentClient(message, Id);
+                    }                           
                 }
             }
             catch (Exception e)
