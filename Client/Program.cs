@@ -24,6 +24,7 @@ namespace Client
     {
         public static string IP { get; set; }
         public static int Port { get; set; }
+        public static string Room { get; set; }
         public static string PlayerName { get; set; }
         public static bool NameRedIsTaken { get; set; }
         public static bool NameBlueIsTaken { get; set; }

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -97,6 +98,7 @@ namespace Client
                         Encoding.Unicode.GetBytes("Người chơi mới đã vào"),
                         0,
                         Encoding.Unicode.GetBytes("Người chơi mới đã vào").Length);
+
                     //Hiển thị Form chọn màu 
                     ColorChoosing colorChoosing = new ColorChoosing();
                     colorChoosing.ShowDialog();
@@ -112,19 +114,27 @@ namespace Client
                         Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName),
                         0,
                         Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName).Length);
+
+                    Task.Delay(100);
+                    //Gửi thông điệp phòng của client
+                    string request = $"/join {ConnectionOptions.Room}";
+                    Stream.Write(
+                                Encoding.Unicode.GetBytes($"/join {ConnectionOptions.Room}"),
+                                0,
+                                Encoding.Unicode.GetBytes($"/join {ConnectionOptions.Room}").Length);
                     //Xác định người chơi hiện tại và đánh dấu họ đã kết nối 
-                    switch (ConnectionOptions.PlayerName)
+                    if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Đỏ\s*\(\s*(\d+)\s*\)"))
                     {
-                        case "Đỏ":
-                            RedConnected = true;
-                            CurrentPlayerId = 0;
-                            break;
-                        case "Xanh":
-                            BlueConnected = true;
-                            CurrentPlayerId = 1;
-                            break;
+                        RedConnected = true;
+                        CurrentPlayerId = 0;
+                    }
+                    else if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Xanh\s*\(\s*(\d+)\s*\)"))
+                    {
+                        BlueConnected = true;
+                        CurrentPlayerId = 1;
                     }
                 }
+
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
@@ -374,61 +384,56 @@ namespace Client
                     } while (Stream.DataAvailable);
                     //Chuyển StringBuilder thành chuỗi 
                     String message = builder.ToString();
-                    //Xử lý các loại tin nhắn từ máy chủ 
-                    switch (message)
+                    //Xử lý các loại tin nhắn từ máy chủ
+                    string[] parts = message.Split(new char[] { ' ', '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (Regex.IsMatch(message, @"Cả\s+2\s+người\s+chơi\s+đã\s+kết\s+nối:\s+\d+") && parts[parts.Length-1] == ConnectionOptions.Room)
                     {
-                        //Khi mà cả 2 người chơi đã kết nối thì ta sẽ xác định hành động dựa trên tên của người chơi 
-                        case "Cả 2 người chơi đã kết nối":
-                            {
-                                switch (ConnectionOptions.PlayerName)
-                                {
-                                    case "Đỏ":
-                                        currentPlayersTurn_textbox.Text = "Tung xúc sắc để bất đầu trò chơi";
-                                        throwDiceBtn.Enabled = true;
-                                        buyBtn.Enabled = false;
-                                        endTurnBtn.Enabled = true;
-                                        break;
-                                    case "Xanh":
-                                        currentPlayersTurn_textbox.Text = "Đỏ đang thực hiện lượt chơi. Chờ...";
-                                        break;
-                                }
-                                break;
-                            }
-                        //Khi người chơi màu đỏ đã kết nối 
-                        case "Đỏ đã kết nối":
-                            {
-                                RedConnected = true;
-                                ConnectionOptions.NameRedIsTaken = true;
-                                // Kiểm tra xem người chơi màu xanh có kết nối không và gửi thông báo nếu cả hai đã kết nối
-                                if (!BlueConnected) continue;
-                                Stream.Write(Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối"), 0, Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối").Length);
-                                break;
-                            }
-                        //Khi người chơi màu xanh đã kết nối 
-                        case "Xanh đã kết nối":
-                            {
-                                BlueConnected = true;
-                                ConnectionOptions.NameBlueIsTaken = true;
-                                // Kiểm tra xem người chơi màu đỏ có kết nối không và gửi thông báo nếu cả hai đã kết nối
-                                if (!RedConnected) continue;
-                                Stream.Write(Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối"), 0, Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối").Length);
-                                break;
-                            }
-                        case "Quân tốt Đỏ đã được chọn":
-                            {
-                                ConnectionOptions.NameRedIsTaken = true;
-                                break;
-                            }
-                        case "Quân tốt Xanh đã được chọn":
-                            {
-                                ConnectionOptions.NameBlueIsTaken = true;
-                                break;
-                            }
+                        if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Đỏ\s*\(\s*(\d+)\s*\)"))
+                        {
+                            currentPlayersTurn_textbox.Text = "Tung xúc sắc để bất đầu trò chơi";
+                            throwDiceBtn.Enabled = true;
+                            buyBtn.Enabled = false;
+                            endTurnBtn.Enabled = true;
+                        }
+                        if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Xanh\s*\(\s*(\d+)\s*\)"))
+                        {
+                            currentPlayersTurn_textbox.Text = "Đỏ đang thực hiện lượt chơi. Chờ...";
+                        }
+                    }
+
+                    //Khi người chơi màu đỏ đã kết nối 
+                    else if (Regex.IsMatch(message, @"Đỏ\s*\(\s*(\d+)\s*\)\s*đã kết nối") && parts[1] == ConnectionOptions.Room)
+                    {
+                        RedConnected = true;
+                        ConnectionOptions.NameRedIsTaken = true;
+                        // Kiểm tra xem người chơi màu xanh có kết nối không và gửi thông báo nếu cả hai đã kết nối
+                        if (!BlueConnected) continue;
+                        Stream.Write(Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối: " + ConnectionOptions.Room), 0, Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối: " + ConnectionOptions.Room).Length);
+                    }
+
+                    //Khi người chơi màu xanh đã kết nối 
+                    else if (Regex.IsMatch(message, @"Xanh\s*\(\s*(\d+)\s*\)\s*đã kết nối") && parts[1] == ConnectionOptions.Room)
+                    {
+                        BlueConnected = true;
+                        ConnectionOptions.NameBlueIsTaken = true;
+                        // Kiểm tra xem người chơi màu đỏ có kết nối không và gửi thông báo nếu cả hai đã kết nối
+                        if (!RedConnected) continue;
+                        Stream.Write(Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối: " + ConnectionOptions.Room), 0, Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối: " + ConnectionOptions.Room).Length);
+
+                    }
+                    else if (message == "Quân tốt Đỏ đã được chọn")
+                    {
+                        ConnectionOptions.NameRedIsTaken = true;
+                    }
+                    else if (message == "Quân tốt Xanh đã được chọn")
+                    {
+                        ConnectionOptions.NameBlueIsTaken = true;
                     }
                    
                     //Xử lý tin nhắn
 
-                    if (message.Contains("Đỏ nhắn : ") || message.Contains("Xanh nhắn : "))
+                    if (message.Contains("Đỏ(") || message.Contains("Xanh("))
                     {
                         UpdateChatBox(message);
                     } 

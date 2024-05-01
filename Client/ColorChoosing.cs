@@ -26,7 +26,7 @@ namespace Client
                 //Nếu chọn màu đỏ 
                 case "Đỏ":
                     //Gán tên người chơi là Red 
-                    ConnectionOptions.PlayerName = "Đỏ";
+                    ConnectionOptions.PlayerName = "Đỏ" + " (" + ConnectionOptions.Room + ")";
                     //Cho biết tên màu đỏ đã được chọn
                     ConnectionOptions.NameRedIsTaken = true;
                     chooseRedPlayerBtn.Enabled = false;
@@ -36,7 +36,7 @@ namespace Client
                  //Nếu chọn màu xanh
                 case "Xanh":
                     //Gán tên người chơi là Blue
-                    ConnectionOptions.PlayerName = "Xanh";
+                    ConnectionOptions.PlayerName = "Xanh" + " (" + ConnectionOptions.Room + ")";
                     //Cho biết tên màu xanh đã được chọn
                     ConnectionOptions.NameBlueIsTaken = true;
                     chooseBluePlayerBtn.Enabled = false;
@@ -49,6 +49,7 @@ namespace Client
                     MessageBox.Show("Chọn màu!");
                     break;
             }
+
         }
         private void returnBtn_Click(object sender, EventArgs e)
         {

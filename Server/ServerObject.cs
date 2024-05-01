@@ -13,6 +13,7 @@ namespace Server
     {
         private static TcpListener tcpListener;
         private readonly List<ClientObject> clients = new List<ClientObject>();
+      
         protected internal void AddConnection(ClientObject clientObject)
         {
             clients.Add(clientObject);

@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connection));
-            this.insertIP = new System.Windows.Forms.TextBox();
+            this.roomTb = new System.Windows.Forms.TextBox();
             this.btnChooseColor = new System.Windows.Forms.Button();
             this.returnBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // insertIP
+            // roomTb
             // 
-            this.insertIP.BackColor = System.Drawing.Color.White;
-            this.insertIP.ForeColor = System.Drawing.Color.Black;
-            this.insertIP.Location = new System.Drawing.Point(165, 240);
-            this.insertIP.MaxLength = 15;
-            this.insertIP.Multiline = true;
-            this.insertIP.Name = "insertIP";
-            this.insertIP.Size = new System.Drawing.Size(282, 29);
-            this.insertIP.TabIndex = 14;
+            this.roomTb.BackColor = System.Drawing.Color.White;
+            this.roomTb.ForeColor = System.Drawing.Color.Black;
+            this.roomTb.Location = new System.Drawing.Point(165, 240);
+            this.roomTb.MaxLength = 15;
+            this.roomTb.Multiline = true;
+            this.roomTb.Name = "roomTb";
+            this.roomTb.Size = new System.Drawing.Size(282, 29);
+            this.roomTb.TabIndex = 14;
             // 
             // btnChooseColor
             // 
@@ -79,14 +79,14 @@
             // 
             // Connection
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 31F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.BackgroundImage = global::Client.Properties.Resources.hin05;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(587, 398);
             this.Controls.Add(this.returnBtn);
-            this.Controls.Add(this.insertIP);
+            this.Controls.Add(this.roomTb);
             this.Controls.Add(this.btnChooseColor);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -104,7 +104,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.TextBox insertIP;
+        private System.Windows.Forms.TextBox roomTb;
         private System.Windows.Forms.Button btnChooseColor;
         private System.Windows.Forms.Button returnBtn;
     }
