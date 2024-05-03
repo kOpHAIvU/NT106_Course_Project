@@ -32,7 +32,7 @@ namespace Server
                 Program.f.tbLog.Invoke((MethodInvoker)delegate
                 {
                     Program.f.tbLog.Text += "[" + DateTime.Now + "] " 
-                                            + "Waiting for players..." 
+                                            + "Đang đợi người chơi vào ..." 
                                             + Environment.NewLine;
                 });
                 while (true)

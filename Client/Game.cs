@@ -385,8 +385,10 @@ namespace Client
                     //Chuyển StringBuilder thành chuỗi 
                     String message = builder.ToString();
                     //Xử lý các loại tin nhắn từ máy chủ
+                    // Tách chuỗi ra để dễ cho việc xử lý từng phòng chơi
                     string[] parts = message.Split(new char[] { ' ', '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
 
+                    //Nhận được thông điệp máy chủ cả 2 ngươi chơi đều đã kết nối
                     if (Regex.IsMatch(message, @"Cả\s+2\s+người\s+chơi\s+đã\s+kết\s+nối:\s+\d+") && parts[parts.Length-1] == ConnectionOptions.Room)
                     {
                         if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Đỏ\s*\(\s*(\d+)\s*\)"))
@@ -431,8 +433,7 @@ namespace Client
                         ConnectionOptions.NameBlueIsTaken = true;
                     }
 
-                    //Xử lý tin nhắn
-
+                    //Xử lý tin nhắ
                     if (message.Contains(" nhắn: "))
                     {
                         //MessageBox.Show(message);
@@ -440,7 +441,6 @@ namespace Client
                         {
                             messageRTB.AppendText(message + Environment.NewLine);
                         }));
-                        //UpdateChatBox(message);  
                     } 
                     
                     //Khi nhận được kết quả lượt đi 
@@ -721,17 +721,6 @@ namespace Client
             //}
         }
 
-        //private void UpdateChatBox(string message)
-        //{
-        //    if (chatListBox.InvokeRequired)
-        //    {
-        //        chatListBox.Invoke(new Action<string>(UpdateChatBox), message);
-        //    }
-        //    else
-        //    {
-        //        chatListBox.Items.Add(message);
-        //    }
-        //}
 
         //Animation di chuyển vị trí
         private async Task<int> MoveTileByTile(int from, int to)

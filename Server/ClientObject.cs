@@ -30,6 +30,8 @@ namespace Server
                 while (true)
                 {
                     string message = GetMessage();
+
+                    // Nhận được thông điệp cả 2 người chơi đã kết nối
                     if (Regex.IsMatch(message, @"Cả\s+2\s+người\s+chơi\s+đã\s+kết\s+nối:\s+\d+"))
                     {
                         server.SendMessageToEveryone(message, Id);
@@ -38,6 +40,8 @@ namespace Server
                             Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
                         });
                     }
+
+                    //Nhận được thông điệp đỏ đã kết nối
                     else if (Regex.IsMatch(message, @"Đỏ\s*\(\s*(\d+)\s*\)"))
                     {
                         Taken.Red = true;
@@ -48,6 +52,8 @@ namespace Server
                         });
                         server.SendMessageToOpponentClient(userName + " đã kết nối", Id);
                     }
+
+                    //Nhân được thông điệp xanh đã kết nối
                     else if (Regex.IsMatch(message, @"Xanh\s*\(\s*(\d+)\s*\)"))
                     {
                         Taken.Blue = true;
@@ -58,6 +64,8 @@ namespace Server
                         });
                         server.SendMessageToOpponentClient(userName + " đã kết nối", Id);
                     }
+
+                    //Nhận được thông điệp người chơi mới đã vào
                     else if (message == "Người chơi mới đã vào")
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
@@ -69,6 +77,8 @@ namespace Server
                         if (Taken.Blue)
                             server.SendMessageToSender("Quân tốt Xanh đã được chọn", Id);
                     }
+
+                    //Nhận được thông điệp Quân tốt đỏ được chọn
                     else if (message == "Quân tốt Đỏ đã được chọn")
                     {
                         server.SendMessageToOpponentClient(message, Id);
@@ -77,6 +87,8 @@ namespace Server
                             Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
                         });
                     }
+
+                    //Nhận được thông điệp quân tốt xanh được chọn
                     else if (message == "Quân tốt Xanh đã được chọn")
                     {
                         server.SendMessageToOpponentClient(message, Id);
@@ -85,6 +97,8 @@ namespace Server
                             Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
                         });
                     }
+
+                    //Nhận được thông điệp rời đi của client
                     if (message.Contains(" đã rời"))
                     {
                         // Tìm vị trí của dấu cách đầu tiên
@@ -103,24 +117,8 @@ namespace Server
                             break;
                         }
                     }
-                    //case "Đỏ đã rời" when userName is "Đỏ":
-                    //    {
-                    //        Program.f.tbLog.Invoke((MethodInvoker)delegate
-                    //        {
-                    //            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
-                    //        });
-                    //        server.RemoveConnection(this.Id);
-                    //        break;
-                    //    }
-                    //case "Xanh đã rời" when userName is "Xanh":
-                    //    {
-                    //        Program.f.tbLog.Invoke((MethodInvoker)delegate
-                    //        {
-                    //            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
-                    //        });
-                    //        server.RemoveConnection(this.Id);
-                    //        break;
-                    //    } 
+                       
+                    //Nhận được tin nhắn của client và procast đến tất cả client còn lại
                     if (message.Contains(" nhắn: "))
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
@@ -130,6 +128,8 @@ namespace Server
                         server.SendMessageToEveryone(userName + message, Id);
                     }
 
+
+                    //Nhận được thông điệp kết thúc lượt và các thông số lượt đi trước của đỏ
                     if (message.Contains("Kết quả lượt đi của Đỏ"))
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
@@ -139,6 +139,8 @@ namespace Server
                         });
                         server.SendMessageToOpponentClient(message, Id);
                     }
+
+                    //Nhận được thông điệp kết thúc lượt và các thông số lượt đi trước của xanh
                     if (message.Contains("Kết quả lượt đi của Xanh"))
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
@@ -148,6 +150,8 @@ namespace Server
                         });
                         server.SendMessageToOpponentClient(message, Id);
                     }
+
+                    //Nhận được thông điệp người chơi chịu mức thuế từ đối phương và số tiền thuế
                     if (message.Contains("thuê"))
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
