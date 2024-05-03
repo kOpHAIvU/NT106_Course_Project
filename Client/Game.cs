@@ -430,12 +430,17 @@ namespace Client
                     {
                         ConnectionOptions.NameBlueIsTaken = true;
                     }
-                   
+
                     //Xử lý tin nhắn
 
-                    if (message.Contains("Đỏ(") || message.Contains("Xanh("))
+                    if (message.Contains(" nhắn: "))
                     {
-                        UpdateChatBox(message);
+                        //MessageBox.Show(message);
+                        this.Invoke(new MethodInvoker(delegate
+                        {
+                            messageRTB.AppendText(message + Environment.NewLine);
+                        }));
+                        //UpdateChatBox(message);  
                     } 
                     
                     //Khi nhận được kết quả lượt đi 
@@ -699,30 +704,34 @@ namespace Client
 
         private void sendBt_Click(object sender, EventArgs e)
         {
-            string message = messageTb.Text.Trim();
-            if (string.IsNullOrEmpty(message))
-            {
-                MessageBox.Show("Vui lòng điền vào TextBox trước khi gửi", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            Stream.Write(Encoding.Unicode.GetBytes("nhắn: " + message), 0, Encoding.Unicode.GetBytes("nhắn : " + message).Length);
-            messageTb.Text = "";
+            //try
+            //{
+                string message = messageTb.Text.Trim();
+                if (string.IsNullOrEmpty(message))
+                {
+                    MessageBox.Show("Vui lòng điền vào TextBox trước khi gửi", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                Stream.Write(Encoding.Unicode.GetBytes(" nhắn: " + message), 0, Encoding.Unicode.GetBytes(" nhắn: " + message).Length);
+                messageTb.Text = "";
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.ToString());
+            //}
         }
 
-        private void UpdateChatBox(string message)
-        {
-            if (chatListBox.InvokeRequired)
-            {
-                chatListBox.Invoke(new Action<string>(UpdateChatBox), message);
-            }
-            else
-            {
-                chatListBox.Items.Add(message);
-            }
-        }
-
-
+        //private void UpdateChatBox(string message)
+        //{
+        //    if (chatListBox.InvokeRequired)
+        //    {
+        //        chatListBox.Invoke(new Action<string>(UpdateChatBox), message);
+        //    }
+        //    else
+        //    {
+        //        chatListBox.Items.Add(message);
+        //    }
+        //}
 
         //Animation di chuyển vị trí
         private async Task<int> MoveTileByTile(int from, int to)

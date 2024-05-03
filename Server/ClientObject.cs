@@ -30,61 +30,79 @@ namespace Server
                 while (true)
                 {
                     string message = GetMessage();
-                        if (Regex.IsMatch(message, @"Cả\s+2\s+người\s+chơi\s+đã\s+kết\s+nối:\s+\d+"))
+                    if (Regex.IsMatch(message, @"Cả\s+2\s+người\s+chơi\s+đã\s+kết\s+nối:\s+\d+"))
+                    {
+                        server.SendMessageToEveryone(message, Id);
+                        Program.f.tbLog.Invoke((MethodInvoker)delegate
+                        {
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
+                        });
+                    }
+                    else if (Regex.IsMatch(message, @"Đỏ\s*\(\s*(\d+)\s*\)"))
+                    {
+                        Taken.Red = true;
+                        userName = message;
+                        Program.f.tbLog.Invoke((MethodInvoker)delegate
+                        {
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName + " đã kết nối" + Environment.NewLine;
+                        });
+                        server.SendMessageToOpponentClient(userName + " đã kết nối", Id);
+                    }
+                    else if (Regex.IsMatch(message, @"Xanh\s*\(\s*(\d+)\s*\)"))
+                    {
+                        Taken.Blue = true;
+                        userName = message;
+                        Program.f.tbLog.Invoke((MethodInvoker)delegate
+                        {
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName + " đã kết nối" + Environment.NewLine;
+                        });
+                        server.SendMessageToOpponentClient(userName + " đã kết nối", Id);
+                    }
+                    else if (message == "Người chơi mới đã vào")
+                    {
+                        Program.f.tbLog.Invoke((MethodInvoker)delegate
+                        {
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
+                        });
+                        if (Taken.Red)
+                            server.SendMessageToSender("Quân tốt Đỏ đã được chọn", Id);
+                        if (Taken.Blue)
+                            server.SendMessageToSender("Quân tốt Xanh đã được chọn", Id);
+                    }
+                    else if (message == "Quân tốt Đỏ đã được chọn")
+                    {
+                        server.SendMessageToOpponentClient(message, Id);
+                        Program.f.tbLog.Invoke((MethodInvoker)delegate
+                        {
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
+                        });
+                    }
+                    else if (message == "Quân tốt Xanh đã được chọn")
+                    {
+                        server.SendMessageToOpponentClient(message, Id);
+                        Program.f.tbLog.Invoke((MethodInvoker)delegate
+                        {
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
+                        });
+                    }
+                    if (message.Contains(" đã rời"))
+                    {
+                        // Tìm vị trí của dấu cách đầu tiên
+                        int vi_tri = message.IndexOf(' ');
+
+                        // Lấy chuỗi từ đầu đến vị trí dấu cách đầu tiên
+                        string chuoi_nho = message.Substring(0, vi_tri);
+
+                        if(chuoi_nho == this.userName)
+                        {
+                            Program.f.tbLog.Invoke((MethodInvoker)delegate
                             {
-                                server.SendMessageToEveryone(message, Id);
-                                Program.f.tbLog.Invoke((MethodInvoker)delegate
-                                {
-                                    Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
-                                });
-                            }
-                        else if(Regex.IsMatch(message, @"Đỏ\s*\(\s*(\d+)\s*\)"))
-                            {
-                                Taken.Red = true;
-                                userName = message;
-                                Program.f.tbLog.Invoke((MethodInvoker)delegate
-                                {
-                                    Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName + " đã kết nối" + Environment.NewLine;
-                                });
-                                server.SendMessageToOpponentClient(userName + " đã kết nối", Id);
-                            }
-                        else if (Regex.IsMatch(message, @"Xanh\s*\(\s*(\d+)\s*\)"))
-                            {
-                                Taken.Blue = true;
-                                userName = message;
-                                Program.f.tbLog.Invoke((MethodInvoker)delegate
-                                {
-                                    Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName + " đã kết nối" + Environment.NewLine;
-                                });
-                                server.SendMessageToOpponentClient(userName + " đã kết nối", Id);
-                            }
-                        else if (message == "Người chơi mới đã vào")
-                            {
-                                Program.f.tbLog.Invoke((MethodInvoker)delegate
-                                {
-                                    Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
-                                });
-                                if (Taken.Red)
-                                    server.SendMessageToSender("Quân tốt Đỏ đã được chọn", Id);
-                                if (Taken.Blue)
-                                    server.SendMessageToSender("Quân tốt Xanh đã được chọn", Id);
-                            }
-                         else if (message == "Quân tốt Đỏ đã được chọn")
-                            {
-                                server.SendMessageToOpponentClient(message, Id);
-                                Program.f.tbLog.Invoke((MethodInvoker)delegate
-                                {
-                                    Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
-                                });
-                            }
-                        else if(message == "Quân tốt Xanh đã được chọn")
-                            {
-                                server.SendMessageToOpponentClient(message, Id);
-                                Program.f.tbLog.Invoke((MethodInvoker)delegate
-                                {
-                                    Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
-                                });
-                            }
+                                Program.f.tbLog.Text += "[" + DateTime.Now + "] " + message + Environment.NewLine;
+                            });
+                            server.RemoveConnection(this.Id);
+                            break;
+                        }
+                    }
                     //case "Đỏ đã rời" when userName is "Đỏ":
                     //    {
                     //        Program.f.tbLog.Invoke((MethodInvoker)delegate
@@ -102,17 +120,21 @@ namespace Server
                     //        });
                     //        server.RemoveConnection(this.Id);
                     //        break;
-                    //    }
-                    if (message.Contains("nhắn: "))
+                    //    } 
+                    if (message.Contains(" nhắn: "))
                     {
-                        server.SendMessageToEveryone(userName + " " + message, Id);
+                        Program.f.tbLog.Invoke((MethodInvoker)delegate
+                        {
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName +  message + Environment.NewLine;
+                        });
+                        server.SendMessageToEveryone(userName + message, Id);
                     }
 
                     if (message.Contains("Kết quả lượt đi của Đỏ"))
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
                         {
-                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đỏ đã hoàn thành lượt đi" + Environment.NewLine;
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName + " đã hoàn thành lượt đi" + Environment.NewLine;
                             Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đến lượt của Xanh" + Environment.NewLine;
                         });
                         server.SendMessageToOpponentClient(message, Id);
@@ -121,7 +143,7 @@ namespace Server
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
                         {
-                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Xanh đã hoàn thành lượt đi" + Environment.NewLine;
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName + " đã hoàn thành lượt đi" + Environment.NewLine;
                             Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đến lượt của Đỏ" + Environment.NewLine;
                         });
                         server.SendMessageToOpponentClient(message, Id);
