@@ -13,11 +13,6 @@ namespace Client
             //Thiết lập giá trị mặc định cho tbColor
             tbColor.Text = "Chưa được chọn";
 
-            //Kiểm tra nếu màu đỏ/ xanh đã được chọn, thì không cho chọn màu đỏ/ xanh nữa
-            if (ConnectionOptions.NameRedIsTaken) 
-                chooseRedPlayerBtn.Enabled = false;
-            if (ConnectionOptions.NameBlueIsTaken) 
-                chooseBluePlayerBtn.Enabled = false;
         }
         private void connect_button_Click(object sender, EventArgs e)
         {
@@ -27,9 +22,6 @@ namespace Client
                 case "Đỏ":
                     //Gán tên người chơi là Red 
                     ConnectionOptions.PlayerName = "Đỏ" + " (" + ConnectionOptions.Room + ")";
-                    //Cho biết tên màu đỏ đã được chọn
-                    ConnectionOptions.NameRedIsTaken = true;
-                    chooseRedPlayerBtn.Enabled = false;
                     Close();
                     DialogResult = DialogResult.OK;
                     break;
@@ -37,9 +29,6 @@ namespace Client
                 case "Xanh":
                     //Gán tên người chơi là Blue
                     ConnectionOptions.PlayerName = "Xanh" + " (" + ConnectionOptions.Room + ")";
-                    //Cho biết tên màu xanh đã được chọn
-                    ConnectionOptions.NameBlueIsTaken = true;
-                    chooseBluePlayerBtn.Enabled = false;
                     Close();
                     //Gắn cho DialogResult kết quả OK 
                     DialogResult = DialogResult.OK;
