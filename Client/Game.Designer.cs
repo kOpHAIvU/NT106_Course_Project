@@ -86,6 +86,7 @@
             this.messageTb = new System.Windows.Forms.TextBox();
             this.sendBt = new System.Windows.Forms.Button();
             this.messageRTB = new System.Windows.Forms.RichTextBox();
+            this.colorLb = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.redPawnIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bluePawnIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tile0)).BeginInit();
@@ -785,12 +786,20 @@
             this.messageRTB.TabIndex = 116;
             this.messageRTB.Text = "";
             // 
+            // colorLb
+            // 
+            this.colorLb.Location = new System.Drawing.Point(1138, 29);
+            this.colorLb.Name = "colorLb";
+            this.colorLb.Size = new System.Drawing.Size(96, 20);
+            this.colorLb.TabIndex = 117;
+            // 
             // Game
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackgroundImage = global::Client.Properties.Resources.hin000;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1258, 664);
+            this.Controls.Add(this.colorLb);
             this.Controls.Add(this.messageRTB);
             this.Controls.Add(this.sendBt);
             this.Controls.Add(this.messageTb);
@@ -968,5 +977,6 @@
         private System.Windows.Forms.TextBox messageTb;
         private System.Windows.Forms.Button sendBt;
         private System.Windows.Forms.RichTextBox messageRTB;
+        private System.Windows.Forms.Label colorLb;
     }
 }

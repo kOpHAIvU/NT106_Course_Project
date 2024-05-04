@@ -118,11 +118,13 @@ namespace Client
                     //Xác định người chơi hiện tại và đánh dấu họ đã kết nối 
                     if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Đỏ\s*\(\s*(\d+)\s*\)"))
                     {
+                        colorLb.BackColor = Color.Red;
                         RedConnected = true;
                         CurrentPlayerId = 0;
                     }
                     else if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Xanh\s*\(\s*(\d+)\s*\)"))
                     {
+                        colorLb.BackColor = Color.Blue;
                         BlueConnected = true;
                         CurrentPlayerId = 1;
                     }
@@ -387,7 +389,7 @@ namespace Client
                     {
                         if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Đỏ\s*\(\s*(\d+)\s*\)"))
                         {
-                            currentPlayersTurn_textbox.Text = "Tung xúc sắc để bất đầu trò chơi";
+                            currentPlayersTurn_textbox.Text = "Tung xúc sắc để bắt đầu trò chơi";
                             throwDiceBtn.Enabled = true;
                             buyBtn.Enabled = false;
                             endTurnBtn.Enabled = false;
