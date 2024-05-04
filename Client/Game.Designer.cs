@@ -164,11 +164,11 @@
             this.currentPositionInfo_richtextbox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.currentPositionInfo_richtextbox.Font = new System.Drawing.Font("Palatino Linotype", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.currentPositionInfo_richtextbox.ForeColor = System.Drawing.Color.Black;
-            this.currentPositionInfo_richtextbox.Location = new System.Drawing.Point(752, 39);
+            this.currentPositionInfo_richtextbox.Location = new System.Drawing.Point(730, 34);
             this.currentPositionInfo_richtextbox.Margin = new System.Windows.Forms.Padding(0);
             this.currentPositionInfo_richtextbox.Name = "currentPositionInfo_richtextbox";
             this.currentPositionInfo_richtextbox.ReadOnly = true;
-            this.currentPositionInfo_richtextbox.Size = new System.Drawing.Size(459, 207);
+            this.currentPositionInfo_richtextbox.Size = new System.Drawing.Size(278, 217);
             this.currentPositionInfo_richtextbox.TabIndex = 65;
             this.currentPositionInfo_richtextbox.Text = "";
             // 
@@ -179,12 +179,12 @@
             this.currentPlayersTurn_textbox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.currentPlayersTurn_textbox.Font = new System.Drawing.Font("Palatino Linotype", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.currentPlayersTurn_textbox.ForeColor = System.Drawing.Color.Black;
-            this.currentPlayersTurn_textbox.Location = new System.Drawing.Point(751, 548);
+            this.currentPlayersTurn_textbox.Location = new System.Drawing.Point(730, 548);
             this.currentPlayersTurn_textbox.Margin = new System.Windows.Forms.Padding(0);
             this.currentPlayersTurn_textbox.Multiline = true;
             this.currentPlayersTurn_textbox.Name = "currentPlayersTurn_textbox";
             this.currentPlayersTurn_textbox.ReadOnly = true;
-            this.currentPlayersTurn_textbox.Size = new System.Drawing.Size(459, 85);
+            this.currentPlayersTurn_textbox.Size = new System.Drawing.Size(500, 90);
             this.currentPlayersTurn_textbox.TabIndex = 64;
             // 
             // whatIsOnDices_textbox
@@ -193,7 +193,7 @@
             this.whatIsOnDices_textbox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.whatIsOnDices_textbox.Font = new System.Drawing.Font("Palatino Linotype", 11.25F, System.Drawing.FontStyle.Bold);
             this.whatIsOnDices_textbox.ForeColor = System.Drawing.Color.Black;
-            this.whatIsOnDices_textbox.Location = new System.Drawing.Point(780, 284);
+            this.whatIsOnDices_textbox.Location = new System.Drawing.Point(780, 296);
             this.whatIsOnDices_textbox.Margin = new System.Windows.Forms.Padding(0);
             this.whatIsOnDices_textbox.Multiline = true;
             this.whatIsOnDices_textbox.Name = "whatIsOnDices_textbox";
@@ -284,11 +284,11 @@
             this.bluePlayerStatusBox_richtextbox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.bluePlayerStatusBox_richtextbox.Font = new System.Drawing.Font("Palatino Linotype", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.bluePlayerStatusBox_richtextbox.ForeColor = System.Drawing.Color.Black;
-            this.bluePlayerStatusBox_richtextbox.Location = new System.Drawing.Point(1040, 377);
+            this.bluePlayerStatusBox_richtextbox.Location = new System.Drawing.Point(1031, 378);
             this.bluePlayerStatusBox_richtextbox.Margin = new System.Windows.Forms.Padding(0);
             this.bluePlayerStatusBox_richtextbox.Name = "bluePlayerStatusBox_richtextbox";
             this.bluePlayerStatusBox_richtextbox.ReadOnly = true;
-            this.bluePlayerStatusBox_richtextbox.Size = new System.Drawing.Size(171, 137);
+            this.bluePlayerStatusBox_richtextbox.Size = new System.Drawing.Size(199, 137);
             this.bluePlayerStatusBox_richtextbox.TabIndex = 58;
             this.bluePlayerStatusBox_richtextbox.Text = "";
             // 
@@ -298,12 +298,12 @@
             this.redPlayerStatusBox_richtextbox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.redPlayerStatusBox_richtextbox.Font = new System.Drawing.Font("Palatino Linotype", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.redPlayerStatusBox_richtextbox.ForeColor = System.Drawing.Color.Black;
-            this.redPlayerStatusBox_richtextbox.Location = new System.Drawing.Point(752, 377);
+            this.redPlayerStatusBox_richtextbox.Location = new System.Drawing.Point(730, 377);
             this.redPlayerStatusBox_richtextbox.Margin = new System.Windows.Forms.Padding(0);
             this.redPlayerStatusBox_richtextbox.Name = "redPlayerStatusBox_richtextbox";
             this.redPlayerStatusBox_richtextbox.ReadOnly = true;
             this.redPlayerStatusBox_richtextbox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.redPlayerStatusBox_richtextbox.Size = new System.Drawing.Size(171, 137);
+            this.redPlayerStatusBox_richtextbox.Size = new System.Drawing.Size(195, 137);
             this.redPlayerStatusBox_richtextbox.TabIndex = 57;
             this.redPlayerStatusBox_richtextbox.Text = "";
             // 
@@ -714,7 +714,7 @@
             this.redDot_picturebox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("redDot_picturebox.BackgroundImage")));
             this.redDot_picturebox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.redDot_picturebox.Cursor = System.Windows.Forms.Cursors.Default;
-            this.redDot_picturebox.Location = new System.Drawing.Point(899, 340);
+            this.redDot_picturebox.Location = new System.Drawing.Point(909, 344);
             this.redDot_picturebox.Margin = new System.Windows.Forms.Padding(0);
             this.redDot_picturebox.Name = "redDot_picturebox";
             this.redDot_picturebox.Size = new System.Drawing.Size(30, 30);
@@ -728,7 +728,7 @@
             this.blueDot_picturebox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("blueDot_picturebox.BackgroundImage")));
             this.blueDot_picturebox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.blueDot_picturebox.Cursor = System.Windows.Forms.Cursors.Default;
-            this.blueDot_picturebox.Location = new System.Drawing.Point(1190, 340);
+            this.blueDot_picturebox.Location = new System.Drawing.Point(1206, 340);
             this.blueDot_picturebox.Margin = new System.Windows.Forms.Padding(0);
             this.blueDot_picturebox.Name = "blueDot_picturebox";
             this.blueDot_picturebox.Size = new System.Drawing.Size(30, 30);
@@ -748,34 +748,47 @@
             // 
             // messageTb
             // 
-            this.messageTb.Location = new System.Drawing.Point(97, 190);
+            this.messageTb.BackColor = System.Drawing.Color.MistyRose;
+            this.messageTb.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.messageTb.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.messageTb.Location = new System.Drawing.Point(1036, 221);
+            this.messageTb.Multiline = true;
             this.messageTb.Name = "messageTb";
-            this.messageTb.Size = new System.Drawing.Size(295, 32);
+            this.messageTb.Size = new System.Drawing.Size(148, 32);
             this.messageTb.TabIndex = 113;
             // 
             // sendBt
             // 
-            this.sendBt.Location = new System.Drawing.Point(395, 184);
+            this.sendBt.BackColor = System.Drawing.Color.LightCoral;
+            this.sendBt.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.sendBt.FlatAppearance.MouseDownBackColor = System.Drawing.Color.IndianRed;
+            this.sendBt.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.sendBt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.sendBt.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.sendBt.Location = new System.Drawing.Point(1185, 220);
             this.sendBt.Name = "sendBt";
-            this.sendBt.Size = new System.Drawing.Size(64, 42);
+            this.sendBt.Size = new System.Drawing.Size(49, 34);
             this.sendBt.TabIndex = 115;
             this.sendBt.Text = "Send";
-            this.sendBt.UseVisualStyleBackColor = true;
+            this.sendBt.UseVisualStyleBackColor = false;
             this.sendBt.Click += new System.EventHandler(this.sendBt_Click);
             // 
             // messageRTB
             // 
-            this.messageRTB.Location = new System.Drawing.Point(95, 89);
+            this.messageRTB.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(163)))), ((int)(((byte)(163)))));
+            this.messageRTB.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.messageRTB.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.messageRTB.Location = new System.Drawing.Point(1036, 59);
             this.messageRTB.Name = "messageRTB";
             this.messageRTB.ReadOnly = true;
-            this.messageRTB.Size = new System.Drawing.Size(297, 96);
+            this.messageRTB.Size = new System.Drawing.Size(195, 151);
             this.messageRTB.TabIndex = 116;
             this.messageRTB.Text = "";
             // 
             // Game
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+            this.BackgroundImage = global::Client.Properties.Resources.hin000;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1258, 664);
             this.Controls.Add(this.messageRTB);

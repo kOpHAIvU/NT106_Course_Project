@@ -121,6 +121,9 @@
   <data name="hin04" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\hin04.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="hin05" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\hin05.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="hin01" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\hin01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -136,7 +139,7 @@
   <data name="hin" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\hin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="hin05" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\hin05.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="hin000" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\hin000.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
