@@ -788,10 +788,13 @@
             // 
             // colorLb
             // 
+            this.colorLb.Font = new System.Drawing.Font("UTM Avo", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.colorLb.ForeColor = System.Drawing.Color.Yellow;
             this.colorLb.Location = new System.Drawing.Point(1138, 29);
             this.colorLb.Name = "colorLb";
             this.colorLb.Size = new System.Drawing.Size(96, 20);
             this.colorLb.TabIndex = 117;
+            this.colorLb.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // Game
             // 

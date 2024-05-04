@@ -51,7 +51,6 @@ namespace Server
                                             ex.Message + 
                                             Environment.NewLine;
                 });
-                CloseAndExit();
             }
         }
         protected internal void SendMessageToOpponentClient(string message, string id)

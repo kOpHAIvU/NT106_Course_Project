@@ -128,6 +128,7 @@ namespace Client
                         BlueConnected = true;
                         CurrentPlayerId = 1;
                     }
+                    colorLb.Text = ConnectionOptions.Room;
                 }
 
                 catch (Exception ex)
@@ -433,7 +434,16 @@ namespace Client
                             }
                         }));
                     }
-                    
+
+                    if (message.Contains(" đã rời") && parts[1] == ConnectionOptions.Room)
+                    {
+                        MessageBox.Show("Đối thủ của bạn đã rời", "Thông báo", MessageBoxButtons.OK,MessageBoxIcon.Stop);
+                        this.Hide();
+                        MainMenu mainMenu = new MainMenu();
+                        mainMenu.ShowDialog();
+                        Disconnect();
+                    }
+
                     //Khi nhận được kết quả lượt đi 
                     //Xử lý thông tin nhận được và cập nhật kết quả cho người 
                     if (message.Contains("Kết quả lượt đi") && parts[0] == ConnectionOptions.Room)
@@ -704,7 +714,16 @@ namespace Client
 
         private void Game_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Client?.Close();
+            if (MessageBox.Show("Bạn có muốn thoát", "Thoát", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                if (Gamemodes.Multiplayer)
+                    Stream.Write(
+                        Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName + " đã rời"),
+                        0,
+                        Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName + " đã rời").Length);
+                Disconnect();
+                Application.Exit();
+            }
         }
 
         //Animation di chuyển vị trí
@@ -1010,8 +1029,10 @@ namespace Client
                         Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName + " đã rời"),
                         0,
                         Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName + " đã rời").Length);
+                this.Hide();
+                MainMenu mainMenu = new MainMenu();
+                mainMenu.ShowDialog();
                 Disconnect();
-                Application.Exit();
             }
         }
 
