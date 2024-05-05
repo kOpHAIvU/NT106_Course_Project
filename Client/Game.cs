@@ -13,8 +13,7 @@ namespace Client
 {
     public partial class Game : Form
     {
-        //Tạo TcpClient để kết nối Server 
-        private static TcpClient Client = new TcpClient();
+        private static Socket serverSocket;
         //Tạo luồng mạng để gửi nhận dữ liệu 
         private static NetworkStream Stream;
         //Kiểm tra người chơi đỏ/ xanh đã kết nối hay chưa 
@@ -41,100 +40,21 @@ namespace Client
         private class Player
         {
             //Cho biết số dư, số lượng tài sản, số lần vào tù, vị trí hiện tại 
-            public int Balance = 500, NumberOfPropertiesOwned, Jail, Position;
+            public int Balance = 200, NumberOfPropertiesOwned, Jail, Position;
             //Tình trạng giam giữ/ thua cuộc
-            public bool InJail, Loser;
+            public bool InJail;
             //ID của tài sản 
             public readonly int[] PropertiesOwned = new int[40];
         }
         //Nhận dữ liệu trên Server
         private class ReceivedMessage
         {
-            public bool InJail, Loser;
-            public int EndPosition, Balance, Jail;
+            public int EndPosition, Balance;
             public readonly int[] PropertiesOwned = new int[40];
         }
         public Game()
         {
             InitializeComponent();
-            //Nếu nhiều người chơi 
-            if (Gamemodes.Multiplayer)
-                try
-                {
-                    //Hiển thị form kết nối
-                    Connection connection = new Connection();
-                    connection.ShowDialog();
-                    //Nếu chọn Cancel thì hủy kết nối ròi quay về MainMenu chính 
-                    if (connection.DialogResult is DialogResult.Cancel)
-                    {
-                        MainMenu mainMenu = new MainMenu();
-                        mainMenu.ShowDialog();
-                        Disconnect();
-                    }
-                    //Hiển thị thông điệp là đang đợi người chơi thứ 2 nên vô hiệu hóa các nút chơi
-                    currentPlayersTurn_textbox.Text = "Chờ đợi người chơi thứ hai...";
-                    throwDiceBtn.Enabled = false;
-                    buyBtn.Enabled = false;
-                    endTurnBtn.Enabled = false;
-                    //Kết nối tới Server
-                    try
-                    {
-                        Client = new TcpClient();
-                        Client.Connect(ConnectionOptions.IP, ConnectionOptions.Port);
-                        Stream = Client.GetStream();
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Không thể kết nối tới server."
-                                        + Environment.NewLine
-                                        + "Server không hoạt động");
-                        Disconnect();
-                    }
-                    //Tạo luồng nhận dữ liệu từ Server 
-                    Thread receiveThread = new Thread(ReceiveMessage);
-                    receiveThread.Start();
-                    //Gửi các thông điẹp cho server biết Người chơi mới vào 
-                    Stream.Write(
-                        Encoding.Unicode.GetBytes("Người chơi mới đã vào"),
-                        0,
-                        Encoding.Unicode.GetBytes("Người chơi mới đã vào").Length);
-
-                    //Hiển thị Form chọn màu 
-                    ColorChoosing colorChoosing = new ColorChoosing();
-                    colorChoosing.ShowDialog();
-                    //Nếu chọn Cancel thì hủy kết nối ròi quay về MainMenu chính 
-                    if (colorChoosing.DialogResult is DialogResult.Cancel)
-                    {
-                        MainMenu mainMenu = new MainMenu();
-                        mainMenu.ShowDialog();
-                        Disconnect();
-                    }
-                    //Gửi tên  người chơi đến server
-                    Stream.Write(
-                        Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName),
-                        0,
-                        Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName).Length);
-
-                    //Xác định người chơi hiện tại và đánh dấu họ đã kết nối 
-                    if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Đỏ\s*\(\s*(\d+)\s*\)"))
-                    {
-                        colorLb.BackColor = Color.Red;
-                        RedConnected = true;
-                        CurrentPlayerId = 0;
-                    }
-                    else if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Xanh\s*\(\s*(\d+)\s*\)"))
-                    {
-                        colorLb.BackColor = Color.Blue;
-                        BlueConnected = true;
-                        CurrentPlayerId = 1;
-                    }
-                    colorLb.Text = ConnectionOptions.Room;
-                }
-
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
             //Tạo các ô trên bàn cờ và người chơi 
             #region Creating tiles and players
             Tile = new[]
@@ -179,7 +99,7 @@ namespace Client
             CreateTile("Lê Văn Duyệt", true, "Green", 300, 32);
             CreateTile("Khí vận", false, "Opportunity", 0, 33);
             CreateTile("Nguyễn Thái Học", true, "Green", 320, 34);
-            CreateTile("Tân Kì Tân Quý", false, "White", 0, 35);
+            CreateTile("Tân Kì Tân Quý", true, "Station", 400, 35);
             CreateTile("Cơ hội", false, "Opportunity", 0, 36);
             CreateTile("Nha Trang", true, "Blue", 350, 37);
             CreateTile("Thuế lương bổng", false, "White", 0, 38);
@@ -187,8 +107,91 @@ namespace Client
 
             Players[0] = new Player();
             Players[1] = new Player();
-            #endregion
-            //Cập nhật giao diện người chơi 
+            #endregion //Cập nhật giao diện người chơi 
+        }
+
+        private void Game_Load(object sender, EventArgs e)
+        {
+            //Nếu nhiều người chơi 
+            if (Gamemodes.Multiplayer)
+                try
+                {
+                    //Hiển thị form kết nối
+                    Connection connection = new Connection();
+                    connection.ShowDialog();
+                    //Nếu chọn Cancel thì hủy kết nối ròi quay về MainMenu chính 
+                    if (connection.DialogResult is DialogResult.Cancel)
+                    {
+                        MainMenu mainMenu = new MainMenu();
+                        mainMenu.ShowDialog();
+                        Stream.Write(
+                            Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName + " đã rời"),
+                            0,
+                            Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName + " đã rời").Length);
+                        Disconnect();
+                    }
+                    //Hiển thị thông điệp là đang đợi người chơi thứ 2 nên vô hiệu hóa các nút chơi
+                    currentPlayersTurn_textbox.Text = "Chờ đợi người chơi thứ hai...";
+                    throwDiceBtn.Enabled = false;
+                    buyBtn.Enabled = false;
+                    endTurnBtn.Enabled = false;
+                    //Kết nối tới Server
+                    try
+                    {
+                        serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                        serverSocket.Connect(ConnectionOptions.IP, ConnectionOptions.Port);
+                        Stream = new NetworkStream(serverSocket);
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Không thể kết nối tới server."
+                                        + Environment.NewLine
+                                        + "Server không hoạt động");
+                        Disconnect();
+                    }
+
+                    //Tạo luồng nhận dữ liệu từ Server 
+                    Thread receiveThread = new Thread(ReceiveMessage);
+                    receiveThread.Start();
+
+                    SendMessageToServer("Người chơi mới đã vào");
+
+
+                    //Hiển thị Form chọn màu 
+                    ColorChoosing colorChoosing = new ColorChoosing();
+                    colorChoosing.ShowDialog();
+                    //Nếu chọn Cancel thì hủy kết nối ròi quay về MainMenu chính 
+                    if (colorChoosing.DialogResult is DialogResult.Cancel)
+                    {
+                        MainMenu mainMenu = new MainMenu();
+                        mainMenu.ShowDialog();
+                        SendMessageToServer(ConnectionOptions.PlayerName + " đã rời");
+                        Disconnect();
+                    }
+                    //Gửi tên  người chơi đến server
+                    SendMessageToServer(ConnectionOptions.PlayerName);
+
+                    //Xác định người chơi hiện tại và đánh dấu họ đã kết nối 
+                    if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Đỏ\s*\(\s*(\d+)\s*\)"))
+                    {
+                        colorLb.BackColor = Color.Red;
+                        RedConnected = true;
+                        CurrentPlayerId = 0;
+                    }
+                    else if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Xanh\s*\(\s*(\d+)\s*\)"))
+                    {
+                        colorLb.BackColor = Color.Blue;
+                        BlueConnected = true;
+                        CurrentPlayerId = 1;
+                    }
+                    colorLb.Text = ConnectionOptions.Room;
+                }
+
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            
             UpdatePlayersStatusBoxes();
             buyBtn.Enabled = false;
         }
@@ -234,10 +237,10 @@ namespace Client
             UpdatePlayersStatusBoxes();
         }
         //Đưa người chơi vào tù 
-        private void InJail(int currentPlayer)
+        private void InJail()
         {
             //Tăng số lần vào tù 
-            Players[currentPlayer].Jail += 1;
+            Players[CurrentPlayerId].Jail += 1;
             //Vô hiệu hóa các nút khi vào tù 
             buyBtn.Enabled = false;
             throwDiceBtn.Enabled = false;
@@ -254,10 +257,11 @@ namespace Client
                     break;
             }
             //Nếu người chơi đã vào tù 3 lần thì thả người chơi ra 
-            if (Players[currentPlayer].Jail != 3) return;
+            if (Players[CurrentPlayerId].Jail != 3) 
+                return;
             //Sau khi thả người chơi thì hiển thị thông báo trên dao diện
-            Players[currentPlayer].InJail = false;
-            Players[currentPlayer].Jail = 0;
+            Players[CurrentPlayerId].InJail = false;
+            Players[CurrentPlayerId].Jail = 0;
             throwDiceBtn.Enabled = true;
             switch (CurrentPlayerId)
             {
@@ -386,19 +390,22 @@ namespace Client
                     string[] parts = message.Split(new char[] { ' ', '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
 
                     //Nhận được thông điệp máy chủ cả 2 ngươi chơi đều đã kết nối
-                    if (Regex.IsMatch(message, @"Cả\s+2\s+người\s+chơi\s+đã\s+kết\s+nối:\s+\d+") && parts[parts.Length-1] == ConnectionOptions.Room)
+                    //if (Regex.IsMatch(message, @"Cả\s+2\s+người\s+chơi\s+đã\s+kết\s+nối:\s+\d+") && parts[parts.Length - 1] == ConnectionOptions.Room)
+                    if (message.Contains("Cả 2 người chơi đã kết nối: ") && parts[parts.Length - 1] == ConnectionOptions.Room)
                     {
-                        if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Đỏ\s*\(\s*(\d+)\s*\)"))
-                        {
-                            currentPlayersTurn_textbox.Text = "Tung xúc sắc để bắt đầu trò chơi";
-                            throwDiceBtn.Enabled = true;
-                            buyBtn.Enabled = false;
-                            endTurnBtn.Enabled = false;
-                        }
+                        if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Đỏ\s*\(\s*(\d+)\s*\)")) 
+                            currentPlayersTurn_textbox.Invoke((MethodInvoker)delegate
+                            {
+                                currentPlayersTurn_textbox.Text = "Tung xúc sắc để bắt đầu trò chơi";
+                                throwDiceBtn.Enabled = true;
+                                buyBtn.Enabled = false;
+                                endTurnBtn.Enabled = false;
+                            });
                         if (Regex.IsMatch(ConnectionOptions.PlayerName, @"Xanh\s*\(\s*(\d+)\s*\)"))
-                        {
-                            currentPlayersTurn_textbox.Text = "Đỏ đang thực hiện lượt chơi. Chờ...";
-                        }
+                            currentPlayersTurn_textbox.Invoke((MethodInvoker)delegate
+                            {
+                                currentPlayersTurn_textbox.Text = "Đỏ đang thực hiện lượt chơi. Chờ...";
+                            });
                     }
 
                     //Khi người chơi màu đỏ đã kết nối 
@@ -406,8 +413,9 @@ namespace Client
                     {
                         RedConnected = true;
                         // Kiểm tra xem người chơi màu xanh có kết nối không và gửi thông báo nếu cả hai đã kết nối
-                        if (!BlueConnected) continue;
-                        Stream.Write(Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối: " + ConnectionOptions.Room), 0, Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối: " + ConnectionOptions.Room).Length);
+                        if (!BlueConnected) 
+                            continue;
+                        SendMessageToServer("Cả 2 người chơi đã kết nối: " + ConnectionOptions.Room);
                     }
 
                     //Khi người chơi màu xanh đã kết nối 
@@ -415,8 +423,9 @@ namespace Client
                     {
                         BlueConnected = true;
                         // Kiểm tra xem người chơi màu đỏ có kết nối không và gửi thông báo nếu cả hai đã kết nối
-                        if (!RedConnected) continue;
-                        Stream.Write(Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối: " + ConnectionOptions.Room), 0, Encoding.Unicode.GetBytes("Cả 2 người chơi đã kết nối: " + ConnectionOptions.Room).Length);
+                        if (!RedConnected) 
+                            continue;
+                        SendMessageToServer("Cả 2 người chơi đã kết nối: " + ConnectionOptions.Room);
 
                     }
 
@@ -430,18 +439,24 @@ namespace Client
                             {
                                 string message_show = message;
                                 message_show = message_show.Replace(" nhắn", "");
-                                messageRTB.AppendText(message_show + Environment.NewLine);
+                                messageRTB.Invoke((MethodInvoker)delegate
+                                {
+                                    messageRTB.AppendText(message_show + Environment.NewLine);
+                                });
                             }
                         }));
                     }
 
                     if (message.Contains(" đã rời") && parts[1] == ConnectionOptions.Room)
                     {
-                        MessageBox.Show("Đối thủ của bạn đã rời", "Thông báo", MessageBoxButtons.OK,MessageBoxIcon.Stop);
-                        this.Hide();
-                        MainMenu mainMenu = new MainMenu();
-                        mainMenu.ShowDialog();
-                        Disconnect();
+                        SendMessageToServer(ConnectionOptions.PlayerName + " đã rời.");
+                        this.Invoke((MethodInvoker)delegate {
+                            MessageBox.Show("Đối thủ của bạn đã rời", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                            this.Hide();
+                            MainMenu mainMenu = new MainMenu();
+                            mainMenu.ShowDialog();
+                            Disconnect();
+                        });
                     }
 
                     //Khi nhận được kết quả lượt đi 
@@ -464,11 +479,11 @@ namespace Client
                         currentPlayersTurn_textbox.Invoke((MethodInvoker)delegate
                         {
                             currentPlayersTurn_textbox.Text = "Lượt của bạn";
+                            throwDiceBtn.Enabled = true;
+                            buyBtn.Enabled = false;
+                            endTurnBtn.Enabled = false;
                         });
 
-                        throwDiceBtn.Enabled = true;
-                        buyBtn.Enabled = false;
-                        endTurnBtn.Enabled = false;
                         ReceivedMessage receivedMessage = new ReceivedMessage();
                 
                         //Lấy các trạng thái sau một lượt đi
@@ -480,24 +495,8 @@ namespace Client
                         String stringBalance = tempMessage.Split('~')[2];
                         receivedMessage.Balance = Convert.ToInt32(stringBalance);
 
-                        //đang trong tù hay không?
-                        String stringInJail = tempMessage.Split('~')[3];
-                        switch (stringInJail)
-                        {
-                            case "True":
-                                receivedMessage.InJail = true;
-                                break;
-                            case "False":
-                                receivedMessage.InJail = false;
-                                break;
-                        }
-
-                        //Sau lượt đi có vào tù hay không?
-                        String stringJail = tempMessage.Split('~')[4];
-                        receivedMessage.Jail = Convert.ToInt32(stringJail);
-
                         //Tài sản (đất) hiện có
-                        String stringPropertiesOwned = tempMessage.Split('~')[5];
+                        String stringPropertiesOwned = tempMessage.Split('~')[3];
                         if (stringPropertiesOwned != "NULL")
                         {
                             //Lấy mã số của các nhà được sở hữu
@@ -511,64 +510,19 @@ namespace Client
                                 receivedMessage.PropertiesOwned[k] = tempArrayOfPropertiesOwned[k];
                         }
 
-                        //Kiểm tra người chơi kia có thua không
-                        String stringLoser = tempMessage.Split('~')[6];
-                        switch (stringLoser)
-                        {
-                            case "True":
-                                receivedMessage.Loser = true;
-                                break;
-                            case "False":
-                                receivedMessage.Loser = false;
-                                break;
-                        }
-                        
-                        //Nếu vào tù thì nhảy qua ô 10
-                        if (Players[CurrentPlayerId].InJail)
-                        {
-                            CurrentPosition = 10;
-                            MoveIcon(CurrentPosition);
-                            Players[CurrentPlayerId].Position = CurrentPosition;
-                            InJail(CurrentPlayerId);
-                        }
-
-                        //Kiểm tra xem ai thắng
-                        if (Players[CurrentPlayerId].Loser || Players[CurrentPlayerId].Balance < 0) 
-                            Lose();
-                        int count = 0;
-                        for (int u = 0; u < 2; u++)
-                        {
-                            if (Players[u].Loser || Players[u].Balance < 0) 
-                                count++;
-                            if (Players[CurrentPlayerId].Loser || count < 1) 
-                                continue;
-                            currentPlayersTurn_textbox.Text = "Bạn thắng!";
-                            switch (CurrentPlayerId)
-                            {
-                                case 0:
-                                    if (MessageBox.Show("Đỏ, bạn đã thắng", "Thông báo", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
-                                    break;
-                                case 1:
-                                    if (MessageBox.Show("Xanh, bạn đã thắng", "Thông báo", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
-                                    break;
-                            }
-                        }
-
                         //Cập nhật trạng thái của biến Players
                         switch (CurrentPlayerId)
                         {
                             case 0:
                                 CurrentPlayerId = 1;
-                                MoveIcon(receivedMessage.EndPosition);
+                                Invoke((MethodInvoker)delegate
+                                {
+                                    MoveIcon(receivedMessage.EndPosition);
+                                }); 
                                 Players[CurrentPlayerId].Position = receivedMessage.EndPosition;
                                 Players[CurrentPlayerId].Balance = receivedMessage.Balance;
-                                Players[CurrentPlayerId].InJail = receivedMessage.InJail;
-                                Players[CurrentPlayerId].Jail = receivedMessage.Jail;
 
-                                if (Players[CurrentPlayerId].InJail) 
-                                    InJail(CurrentPlayerId);
                                 int i = 0;
-
                                 foreach (var item in receivedMessage.PropertiesOwned)
                                 {
                                     Players[CurrentPlayerId].PropertiesOwned[i] = item;
@@ -585,23 +539,18 @@ namespace Client
                                             DrawCircle(item, 1);
                                         });
                                     }
-
-                                Players[CurrentPlayerId].Loser = receivedMessage.Loser;
-                                if (Players[CurrentPlayerId].Loser || Players[CurrentPlayerId].Balance < 0) 
-                                    Lose();
                                 CurrentPlayerId = 0;
                                 UpdatePlayersStatusBoxes();
                                 break;
 
                             case 1:
                                 CurrentPlayerId = 0;
-                                MoveIcon(receivedMessage.EndPosition);
+                                Invoke((MethodInvoker)delegate
+                                {
+                                    MoveIcon(receivedMessage.EndPosition);
+                                }); 
                                 Players[CurrentPlayerId].Position = receivedMessage.EndPosition;
                                 Players[CurrentPlayerId].Balance = receivedMessage.Balance;
-                                Players[CurrentPlayerId].InJail = receivedMessage.InJail;
-                                Players[CurrentPlayerId].Jail = receivedMessage.Jail;
-                                if (Players[CurrentPlayerId].InJail) 
-                                    InJail(CurrentPlayerId);
 
                                 int k = 0;
                                 foreach (var item in receivedMessage.PropertiesOwned)
@@ -621,13 +570,13 @@ namespace Client
                                         });
                                     }
 
-                                Players[CurrentPlayerId].Loser = receivedMessage.Loser;
-                                if (Players[CurrentPlayerId].Loser || Players[CurrentPlayerId].Balance < 0) 
-                                    Lose();
                                 CurrentPlayerId = 1;
                                 UpdatePlayersStatusBoxes();
                                 break;
                         }
+
+                        if (Convert.ToInt32(stringBalance) < 0)
+                            Win();
                     }
                     //Cập nhật số tiền cho người chơi 
                     if (message.Contains("Trả tiền thuê nhà cho Đỏ: ") && parts[0] == ConnectionOptions.Room)
@@ -656,31 +605,31 @@ namespace Client
         //Hàm được gọi khi người chơi thua cuộc
         private void Lose()
         {
-            //Đánh dấu người chơi hiện tại thua cuộc 
-            Players[CurrentPlayerId].Loser = true;
-            //Vô hiệu hóa các nút chơi 
-            throwDiceBtn.Enabled = false;
-            buyBtn.Enabled = false;
-            endTurnBtn.Enabled = false;
-            //Hiển thị thông báo về sự thua cuộc của người chơi 
-            switch (CurrentPlayerId)
+            if (MessageBox.Show("Bạn đã thua! Chúc may mắn lần sau!", "Thông báo", MessageBoxButtons.OK) == DialogResult.OK)
             {
-                case 0 when Players[0].Loser:
-                    currentPlayersTurn_textbox.Text = "Đỏ, bạn đã thua!";
-                    break;
-                case 1 when Players[1].Loser:
-                    currentPlayersTurn_textbox.Text = "Xanh, bạn đã thua!";
-                    break;
+                SendMessageToServer(ConnectionOptions.PlayerName + " thua.");
+                this.Hide();
+                MainMenu mainMenu = new MainMenu();
+                mainMenu.ShowDialog();
             }
+        }
+
+        private void Win()
+        {
+            if (MessageBox.Show("Bạn đã thắng! Congratulations!", "Thông báo", MessageBoxButtons.OK) == DialogResult.OK)
+            {
+                SendMessageToServer(ConnectionOptions.PlayerName + " thắng.");
+                this.Hide();
+                MainMenu mainMenu = new MainMenu();
+                mainMenu.ShowDialog();
+            }
+
         }
         //Phương thức ngắt kết nối và thoát ứng dụng 
         private static void Disconnect()
         {
-            //Đống luồng dữ liệu 
             Stream?.Close();
-            //Đóng kết nối của client 
-            Client?.Close();
-            //Thoát khỏi ứng dụng
+            serverSocket?.Close();
             Environment.Exit(0);
         }
         //Phương thức di chiển biểu tượng của người chơi
@@ -705,25 +654,17 @@ namespace Client
 
         private void sendBt_Click(object sender, EventArgs e)
         {
-                string message = messageTb.Text.Trim();
-                if (string.IsNullOrEmpty(message))
-                    return;
-                Stream.Write(Encoding.Unicode.GetBytes(" nhắn: " + message), 0, Encoding.Unicode.GetBytes(" nhắn: " + message).Length);
-                messageTb.Text = "";
+            string message = messageTb.Text.Trim();
+            if (string.IsNullOrEmpty(message))
+                return;
+            SendMessageToServer(" nhắn: " + message);
+            messageTb.Text = "";
         }
 
         private void Game_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (MessageBox.Show("Bạn có muốn thoát", "Thoát", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                if (Gamemodes.Multiplayer)
-                    Stream.Write(
-                        Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName + " đã rời"),
-                        0,
-                        Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName + " đã rời").Length);
-                Disconnect();
-                Application.Exit();
-            }
+            if (Gamemodes.Multiplayer)
+                SendMessageToServer(ConnectionOptions.PlayerName + " đã rời");
         }
 
         //Animation di chuyển vị trí
@@ -776,7 +717,7 @@ namespace Client
                 , goingToJail = false
                 , landedOpportunity = false;
             int OppResult = new int();
-            //Cho phép người chơi mua bút 
+            //Cho phép người chơi mua đất
             buyBtn.Enabled = true;
             endTurnBtn.Enabled = true;
 
@@ -798,7 +739,7 @@ namespace Client
             int positionAfterDicing = Players[CurrentPlayerId].Position + Dice;
             //Xử lý người chơi ở trong tù 
             if (Players[CurrentPlayerId].InJail) 
-                InJail(CurrentPlayerId);
+                InJail();
 
             //Tới các ô chức năng ở 4 góc
             switch (CurrentPosition)
@@ -818,7 +759,7 @@ namespace Client
                 case 30:
                     CurrentPosition = 10;
                     Players[CurrentPlayerId].InJail = true;
-                    InJail(CurrentPlayerId);
+                    InJail();
                     goingToJail = true;
                     break;
             }
@@ -859,7 +800,6 @@ namespace Client
             currentPositionInfo_richtextbox.Text = "Vị trí " + CurrentPosition;
             currentPositionInfo_richtextbox.AppendText("\r\n" + Properties[CurrentPosition].Name);
             currentPositionInfo_richtextbox.AppendText("\r\n" + "Giá " + Properties[CurrentPosition].Price);
-            currentPositionInfo_richtextbox.AppendText("\r\n" + "Loại " + Properties[CurrentPosition].Color);
 
             if (visitedJailExploration) 
                 currentPositionInfo_richtextbox.AppendText("\r\n" + "Bạn đang thăm tù. ");
@@ -894,65 +834,6 @@ namespace Client
             }
 
             currentPositionInfo_richtextbox.ScrollToCaret();
-            if (Players[CurrentPlayerId].Loser || Players[CurrentPlayerId].Balance < 0)
-            {
-                Lose();
-                string turnLogString = string.Empty;
-                switch (CurrentPlayerId)
-                {
-                    case 0:
-                        turnLogString = ConnectionOptions.Room + " Kết quả lượt đi của Đỏ";
-                        break;
-                    case 1:
-                        turnLogString = ConnectionOptions.Room + " Kết quả lượt đi của Xanh";
-                        break;
-                }
-                turnLogString += CurrentPlayerId.ToString() + '~'
-                    + Players[CurrentPlayerId].Position + '~'
-                    + Players[CurrentPlayerId].Balance + '~'
-                    + Players[CurrentPlayerId].InJail + '~'
-                    + Players[CurrentPlayerId].Jail + '~';
-                foreach (var item in Players[CurrentPlayerId].PropertiesOwned)
-                    if (item != 0)
-                    {
-                        turnLogString += item;
-                        turnLogString += ' ';
-                        turnLogString += ' ';
-                    }
-                if (turnLogString.Last() is '~')
-                    turnLogString += "NULL";
-                turnLogString += '~' + Players[CurrentPlayerId].Loser.ToString();
-                if (CurrentPlayerId is 0)
-                {
-                    currentPlayersTurn_textbox.Text = "Xanh đang thực hiện lượt chơi. Chờ...";
-                    Stream.Write(Encoding.Unicode.GetBytes(turnLogString), 0, Encoding.Unicode.GetBytes(turnLogString).Length);
-                }
-                else
-                {
-                    currentPlayersTurn_textbox.Text = "Đỏ đang thực hiện lượt chơi. Chờ...";
-                    Stream.Write(Encoding.Unicode.GetBytes(turnLogString), 0, Encoding.Unicode.GetBytes(turnLogString).Length);
-                }
-            }
-
-            int count = 0;
-            for (int i = 0; i < 2; i++)
-            {
-                if (Players[i].Loser) 
-                    count++;
-                if (Players[CurrentPlayerId].Loser || count < 1) 
-                    continue;
-                currentPlayersTurn_textbox.Text = "Bạn thắng! Congratulations!";
-
-                switch (CurrentPlayerId)
-                {
-                    case 0:
-                        if (MessageBox.Show("Đỏ, bạn đã thắng", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
-                        break;
-                    case 1:
-                        if (MessageBox.Show("Xanh, bạn đã thắng", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
-                        break;
-                }
-            }
 
             //Nếu đất này chưa được mua hoặc bản thân đang sở hữu thì kết thúc hàm
             if (Players[CurrentPlayerId].PropertiesOwned[CurrentPosition] == CurrentPosition || !Properties[CurrentPosition].Owned) 
@@ -968,7 +849,7 @@ namespace Client
                     {
                         string rentMessage = ConnectionOptions.Room + " Trả tiền thuê nhà cho Xanh: " + GetRent(Dice);
                         MessageBox.Show("Đỏ trả tiền thuê nhà cho Xanh: " + GetRent(Dice));
-                        Stream.Write(Encoding.Unicode.GetBytes(rentMessage), 0, Encoding.Unicode.GetBytes(rentMessage).Length);
+                        SendMessageToServer(rentMessage);
                     }
                     break;
                 case 1:
@@ -978,7 +859,7 @@ namespace Client
                     {
                         string rentMessage = ConnectionOptions.Room + " Trả tiền thuê nhà cho Đỏ: : " + GetRent(Dice);
                         MessageBox.Show("Xanh trả tiền thuê nhà cho Đỏ: : " + GetRent(Dice));
-                        Stream.Write(Encoding.Unicode.GetBytes(rentMessage), 0, Encoding.Unicode.GetBytes(rentMessage).Length);
+                        SendMessageToServer(rentMessage);
                     }
                     break;
             }
@@ -1015,9 +896,6 @@ namespace Client
                     currentPlayersTurn_textbox.Text = "Bạn không đủ tiền";
             else 
                 currentPlayersTurn_textbox.Text = "Bạn không thể thực hiện hành động đó";
-
-            if (Players[CurrentPlayerId].Balance < 0) 
-                Lose();
         }
 
         private void QuitGameBtn_Click(object sender, EventArgs e)
@@ -1025,14 +903,11 @@ namespace Client
             if (MessageBox.Show("Bạn có muốn thoát", "Thoát", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 if (Gamemodes.Multiplayer)
-                    Stream.Write(
-                        Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName + " đã rời"),
-                        0,
-                        Encoding.Unicode.GetBytes(ConnectionOptions.PlayerName + " đã rời").Length);
+                    SendMessageToServer(ConnectionOptions.PlayerName + " đã rời");
+
                 this.Hide();
                 MainMenu mainMenu = new MainMenu();
                 mainMenu.ShowDialog();
-                Disconnect();
             }
         }
 
@@ -1040,28 +915,6 @@ namespace Client
         {
             if (Gamemodes.Multiplayer)
             {
-                if (Players[CurrentPlayerId].Loser || Players[CurrentPlayerId].Balance < 0) 
-                    Lose();
-                int count = 0;
-                for (int i = 0; i < 2; i++)
-                {
-                    if (Players[i].Loser) 
-                        count++;
-                    if (Players[CurrentPlayerId].Loser || count < 1) 
-                        continue;
-                    currentPlayersTurn_textbox.Text = "Bạn thắng!";
-                    switch (CurrentPlayerId)
-                    {
-                        case 0:
-                            if (MessageBox.Show("Đỏ, bạn đã thắng", "Thông báo", MessageBoxButtons.OK) is DialogResult.OK) 
-                                Application.Exit();
-                            break;
-                        case 1:
-                            if (MessageBox.Show("Xanh, bạn đã thắng", "Thông báo", MessageBoxButtons.OK) is DialogResult.OK) 
-                                Application.Exit();
-                            break;
-                    }
-                }
                 currentPositionInfo_richtextbox.Text = string.Empty;
                 string turnLogString = string.Empty;
                 switch (CurrentPlayerId)
@@ -1074,30 +927,32 @@ namespace Client
                         break;
                 }
                 turnLogString += CurrentPlayerId.ToString() + '~'
-                    + Players[CurrentPlayerId].Position + '~' 
-                    + Players[CurrentPlayerId].Balance + '~'
-                    + Players[CurrentPlayerId].InJail + '~'
-                    + Players[CurrentPlayerId].Jail + '~';
+                    + Players[CurrentPlayerId].Position + '~'
+                    + Players[CurrentPlayerId].Balance + '~';
                 foreach (var item in Players[CurrentPlayerId].PropertiesOwned)
                     if (item != 0)
                     {
                         turnLogString += item;
                         turnLogString += ' ';
                     }
-                if (turnLogString.Last() is '~') 
-                    turnLogString += "NULL";
-                turnLogString += '~' + Players[CurrentPlayerId].Loser.ToString();
                 if (CurrentPlayerId is 0)
                 {
                     currentPlayersTurn_textbox.Text = "Xanh đang thực hiện lượt chơi. Chờ...";
-                    Stream.Write(Encoding.Unicode.GetBytes(turnLogString), 0, Encoding.Unicode.GetBytes(turnLogString).Length);
-                } else {
-                    currentPlayersTurn_textbox.Text = "Đỏ đang thực hiện lượt chơi. Chờ...";
-                    Stream.Write(Encoding.Unicode.GetBytes(turnLogString), 0, Encoding.Unicode.GetBytes(turnLogString).Length);
+                    SendMessageToServer(turnLogString);
                 }
-                throwDiceBtn.Enabled = false;
-                buyBtn.Enabled = false;
-                endTurnBtn.Enabled = false;
+                else {
+                    currentPlayersTurn_textbox.Text = "Đỏ đang thực hiện lượt chơi. Chờ...";
+                    SendMessageToServer(turnLogString);
+                }
+
+                if (Players[CurrentPlayerId].Balance < 0)
+                    Lose();
+                else
+                {
+                    throwDiceBtn.Enabled = false;
+                    buyBtn.Enabled = false;
+                    endTurnBtn.Enabled = false;
+                }
             }
             if (Gamemodes.Singleplayer)
             {
@@ -1118,26 +973,32 @@ namespace Client
                     CurrentPosition = 10;
                     MoveIcon(CurrentPosition);
                     Players[CurrentPlayerId].Position = CurrentPosition;
-                    InJail(CurrentPlayerId);
                 }
-                if (Players[CurrentPlayerId].Loser || Players[CurrentPlayerId].Balance < 0) Lose();
-                var count = 0;
-                for (var i = 0; i < 2; i++)
+                if (Players[CurrentPlayerId].Balance < 0)
+                    Lose();
+                else
                 {
-                    if (Players[i].Loser) count++;
-                    if (Players[CurrentPlayerId].Loser || count < 1) continue;
-                    currentPlayersTurn_textbox.Text = "Bạn thắng!";
-                    switch (CurrentPlayerId)
-                    {
-                        case 0:
-                            if (MessageBox.Show("Đỏ, bạn đã thắng", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
-                            break;
-                        case 1:
-                            if (MessageBox.Show("Xanh, bạn đã thắng", "Message", MessageBoxButtons.OK) is DialogResult.OK) Application.Exit();
-                            break;
-                    }
+                    throwDiceBtn.Enabled = false;
+                    buyBtn.Enabled = false;
+                    endTurnBtn.Enabled = false;
                 }
                 currentPositionInfo_richtextbox.Text = string.Empty;
+            }
+        }
+        private static void SendMessageToServer(string message)
+        {
+            try
+            {
+                // chuyển chuỗi thành các byte chuyển đi
+                byte[] data = Encoding.Unicode.GetBytes(message);
+
+                // Gửi chuỗi thông qua stream
+                Stream.Write(data, 0, data.Length);
+            }
+            catch (Exception ex)
+            {
+                // hiển thị màn hình là bị lỗi
+                MessageBox.Show("Lỗi khi gửi thông báo tới Server: " + ex.Message);
             }
         }
     }

@@ -25,3 +25,8 @@ Các luật thay đổi
 - Phải ở tù 3 lượt mới được ra
 - Các bến xe phải đóng = số lần tung xúc sắc * 20
 - Không thêm biệt thự được
+
+List lỗi:
+- Lỗi vào tù thì người khác bị vào
+- Disconnect thì ngay lập tức server sập
+- Lỗi thắng thua vẫn y nguyên

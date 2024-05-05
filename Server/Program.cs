@@ -14,9 +14,4 @@ namespace Server
             Application.Run(new ServerForm());
         }
     }
-    internal static class Taken
-    {
-        public static bool Red { get; set; }
-        public static bool Blue { get; set; }
-    }
 }

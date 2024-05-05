@@ -871,6 +871,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Monopoly";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Game_FormClosed);
+            this.Load += new System.EventHandler(this.Game_Load);
             ((System.ComponentModel.ISupportInitialize)(this.redPawnIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bluePawnIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tile0)).EndInit();

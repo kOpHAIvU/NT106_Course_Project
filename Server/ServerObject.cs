@@ -11,7 +11,7 @@ namespace Server
 {
     public class ServerObject
     {
-        private static TcpListener tcpListener;
+        private Socket serverSocket;
         private readonly List<ClientObject> clients = new List<ClientObject>();
       
         protected internal void AddConnection(ClientObject clientObject)
@@ -20,15 +20,18 @@ namespace Server
         }
         protected internal void RemoveConnection(string id)
         {
-            var client = clients.FirstOrDefault(c => c.Id == id);
-            if (client != null) clients.Remove(client);
+            var client = clients.Find(c => c.Id == id);
+            if (client != null)
+                clients.Remove(client);
         }
         protected internal void Listen()
         {
             try
             {
-                tcpListener = new TcpListener(IPAddress.Parse("127.0.0.1"), 8888);
-                tcpListener.Start();
+                //Tạo kết nối với sever
+                serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                serverSocket.Bind(new IPEndPoint(IPAddress.Any, 8888));
+                serverSocket.Listen(100);
                 Program.f.tbLog.Invoke((MethodInvoker)delegate
                 {
                     Program.f.tbLog.Text += "[" + DateTime.Now + "] " 
@@ -37,9 +40,12 @@ namespace Server
                 });
                 while (true)
                 {
-                    var tcpClient = tcpListener.AcceptTcpClient();
-                    var clientObject = new ClientObject(tcpClient, this);
-                    var clientThread = new Thread(clientObject.Process);
+                    //Tiếp nhận các client 
+                    Socket handler = serverSocket.Accept();
+                    //Tạo một clientObject mới
+                    ClientObject clientObject = new ClientObject(handler, this);
+                    // Tạo luồng riêng cho ClientObject
+                    Thread clientThread = new Thread(new ThreadStart(clientObject.Process));
                     clientThread.Start();
                 }
             }
@@ -55,29 +61,34 @@ namespace Server
         }
         protected internal void SendMessageToOpponentClient(string message, string id)
         {
-            foreach (var t in clients.Where(t => t.Id != id))
-                t.Stream.Write(Encoding.Unicode.GetBytes(message), 0, 
-                    Encoding.Unicode.GetBytes(message).Length);
+            foreach (var client in clients.Where(c => c.Id != id))
+            {
+                byte[] data = Encoding.Unicode.GetBytes(message);
+                client.Client.Send(data);
+            }
         }
         protected internal void SendMessageToSender(string message, string id)
         {
-            foreach (var t in clients.Where(t => t.Id == id))
-                t.Stream.Write(Encoding.Unicode.GetBytes(message), 0, 
-                    Encoding.Unicode.GetBytes(message).Length);
+            foreach (var client in clients.Where(c => c.Id == id))
+            {
+                byte[] data = Encoding.Unicode.GetBytes(message);
+                client.Client.Send(data);
+            }
         }
         protected internal void SendMessageToEveryone(string message, string id)
         {
-            foreach (var t in clients.Where(t => t.Id != id))
-                t.Stream.Write(Encoding.Unicode.GetBytes(message), 0, 
-                    Encoding.Unicode.GetBytes(message).Length);
-            foreach (var t in clients.Where(t => t.Id == id))
-                t.Stream.Write(Encoding.Unicode.GetBytes(message), 0, 
-                    Encoding.Unicode.GetBytes(message).Length);
+            foreach (var client in clients)
+            {
+                byte[] data = Encoding.Unicode.GetBytes(message);
+                client.Client.Send(data);
+            }
         }
-        protected internal void CloseAndExit()
+        //Ngắt kết nối sever
+        protected internal void Disconnect()
         {
-            tcpListener?.Stop();
-            foreach (var t in clients) t.Close();
+            serverSocket.Close();
+            foreach (var client in clients)
+                client.Client.Close();
             Environment.Exit(0);
         }
     }

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 
 namespace Server
 {
     public partial class ServerForm : Form
     {
-        private static ServerObject server;
+        private static ServerObject serverObject;
         private static Thread listenThread;
         public ServerForm()
         {
@@ -36,7 +37,7 @@ namespace Server
                                 "Turning off", MessageBoxButtons.YesNo))
                     {
                         case DialogResult.Yes:
-                            server?.CloseAndExit();
+                            serverObject.Disconnect();
                             break;
                         case DialogResult.No:
                             break;
@@ -50,22 +51,23 @@ namespace Server
             {
                 btnTurnOn.Enabled = false;
                 btnTurnOff.Enabled = true;
-                server = new ServerObject();
-                listenThread = new Thread(server.Listen);
+                serverObject = new ServerObject();
+                listenThread = new Thread(serverObject.Listen);
+                listenThread.IsBackground = true;
                 listenThread.Start();
                 Text = "Server. State: on";
                 btnTurnOff.Text = "Turn off";
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error while turning the server on:" + ex.Message);
-                server?.CloseAndExit();
+                MessageBox.Show("Lỗi bật máy chủ: " + ex.Message);
+                serverObject?.Disconnect();
             }
         }
 
         private void ServerForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            server?.CloseAndExit();
+            serverObject?.Disconnect();
         }
     }
 }
