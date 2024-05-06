@@ -154,7 +154,8 @@ namespace Server
                     }
                     //Nhận được thông điệp kết thúc lượt và các thông số lượt đi trước của đỏ
                     else if (message.Contains("Kết quả lượt đi của Đỏ"))
-                    {
+                    {   
+                        server.SendMessageToOpponentClient(message, Id);
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
                         {
                             string tempMessage = message;
@@ -171,11 +172,12 @@ namespace Server
                             Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đến lượt của Xanh" + Environment.NewLine;
                             UpdateToFile("[" + DateTime.Now + "] " + "Đến lượt của Xanh");
                         });
-                        server.SendMessageToOpponentClient(message, Id);
+                        
                     }
                     //Nhận được thông điệp kết thúc lượt và các thông số lượt đi trước của xanh
                     else if (message.Contains("Kết quả lượt đi của Xanh"))
-                    {
+                    {   
+                        server.SendMessageToOpponentClient(message, Id);
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
                         {
                             string tempMessage = message;
@@ -192,7 +194,7 @@ namespace Server
                             Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đến lượt của Đỏ" + Environment.NewLine;
                             UpdateToFile("[" + DateTime.Now + "] " + "Đến lượt của Đỏ");
                         });
-                        server.SendMessageToOpponentClient(message, Id);
+                        
                     }
                     //Nhận được thông điệp người chơi chịu mức thuế từ đối phương và số tiền thuế
                     else if (message.Contains("thuê"))

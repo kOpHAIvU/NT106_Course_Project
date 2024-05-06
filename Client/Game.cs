@@ -966,7 +966,6 @@ namespace Client
                     currentPlayersTurn_textbox.Text = "Đỏ đang thực hiện lượt chơi. Chờ...";
                     SendMessageToServer(turnLogString);
                 }
-                SendMessageToServer(turnLogString);
 
 
                 if (Players[CurrentPlayerId].Balance < 0)
