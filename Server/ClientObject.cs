@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Net.Sockets;
@@ -16,6 +17,63 @@ namespace Server
         private string userName;
         private StreamWriter write;
         DateTime now = DateTime.Now;
+
+        List<(string, int)> o = new List<(string, int)>
+            {
+                ("GO", 0),
+                ("Phú Lâm", 1),
+                ("Khí vận", 2),
+                ("Nhà bè Phú Xuân", 3),
+                ("Thuế lợi tức", 4),
+                ("Bến xe Lục Tỉnh", 5),
+                ("Thị Nghè", 6),
+                ("Cơ hội", 7),
+                ("Tân Định", 8),
+                ("Bến Chương Dương", 9),
+                ("Thăm tù", 10),
+                ("Phan Đình Phùng", 11),
+                ("Công ty điện lực", 12),
+                ("Trịnh Minh Thế", 13),
+                ("Lý Thái Tổ", 14),
+                ("Bến xe Lam Chợ Lớn", 15),
+                ("Đại lộ Hùng Vương", 16),
+                ("Khí vận", 17),
+                ("Gia Long", 18),
+                ("Bến Bạch Đằng", 19),
+                ("Sân bay", 20),
+                ("Đường Công Lý", 21),
+                ("Cơ hội", 22),
+                ("Đại lộ thống nhất", 23),
+                ("Đại lộ Cộng Hòa", 24),
+                ("Bến xe An Đông", 25),
+                ("Đại lộ Hồng Thập Tự", 26),
+                ("Đại lộ Hai Bà Trưng", 27),
+                ("Công ty thủy cục", 28),
+                ("Xa lộ Biên Hòa", 29),
+                ("VÔ TÙ", 30),
+                ("Phan Thanh Giảm", 31),
+                ("Lê Văn Duyệt", 32),
+                ("Khí vận", 33),
+                ("Nguyễn Thái Học", 34),
+                ("Tân Kì Tân Quý", 35),
+                ("Cơ hội", 36),
+                ("Nha Trang", 37),
+                ("Thuế lương bổng", 38),
+                ("Cố Đô Huế", 39)
+            };
+       
+        public string FindNameByNumber(int number)
+            {
+                foreach (var pair in o)
+                {
+                    if (pair.Item2 == number)
+                    {
+                        return pair.Item1; // Trả về tên khi tìm thấy số
+                    }
+                }
+                // Trả về null nếu không tìm thấy
+                return null; 
+            }
         public ClientObject(Socket socket, ServerObject serverObject)
         {
             Id = Guid.NewGuid().ToString();
@@ -99,8 +157,17 @@ namespace Server
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
                         {
-                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName + " đã hoàn thành lượt đi" + Environment.NewLine;
-                            UpdateToFile("[" + DateTime.Now + "] " + userName + " đã hoàn thành lượt đi");
+                            string tempMessage = message;
+                            tempMessage = tempMessage.Replace("Kết quả lượt đi của Đỏ", "");
+                            string[] data = tempMessage.Split('~');
+                            int STT = Convert.ToInt32(data[1]);
+                            string vitri = FindNameByNumber(STT);
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName
+                                                + "\tVị trí: " + vitri
+                                                + "\tTiền: " + data[2] + Environment.NewLine;
+                            UpdateToFile("[" + DateTime.Now + "] " + userName
+                                                + "\tVị trí: " + vitri
+                                                + "\tTiền: " + data[2]);
                             Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đến lượt của Xanh" + Environment.NewLine;
                             UpdateToFile("[" + DateTime.Now + "] " + "Đến lượt của Xanh");
                         });
@@ -111,8 +178,17 @@ namespace Server
                     {
                         Program.f.tbLog.Invoke((MethodInvoker)delegate
                         {
-                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName + " đã hoàn thành lượt đi" + Environment.NewLine;
-                            UpdateToFile("[" + DateTime.Now + "] " + userName + " đã hoàn thành lượt đi");
+                            string tempMessage = message;
+                            tempMessage = tempMessage.Replace("Kết quả lượt đi của Xanh", "");
+                            string[] data = tempMessage.Split('~');
+                            int STT = Convert.ToInt32(data[1]);
+                            string vitri = FindNameByNumber(STT);
+                            Program.f.tbLog.Text += "[" + DateTime.Now + "] " + userName
+                                                 + "\tVị trí: " + vitri
+                                                 + "\tTiền: " + data[2] + Environment.NewLine;
+                            UpdateToFile("[" + DateTime.Now + "] " + userName
+                                                + "\tVị trí: " + vitri
+                                                + "\tTiền: " + data[2]);
                             Program.f.tbLog.Text += "[" + DateTime.Now + "] " + "Đến lượt của Đỏ" + Environment.NewLine;
                             UpdateToFile("[" + DateTime.Now + "] " + "Đến lượt của Đỏ");
                         });
