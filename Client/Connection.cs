@@ -23,7 +23,7 @@ namespace Client
                 ConnectionOptions.Port = 8888;
                 //Convert.ToInt32(insertPort.Text);
                 // gán địa chỉ IP của sever cho biến IP trong class ConnectionOptions
-                ConnectionOptions.IP = "127.0.0.1";
+                ConnectionOptions.IP = "192.168.1.1";
                 //insertIP.Text;
                 //Gắn cho DialogResult kết quả OK 
                 DialogResult = DialogResult.OK;
