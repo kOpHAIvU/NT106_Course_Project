@@ -24,7 +24,7 @@ namespace Server
             if (client != null)
                 clients.Remove(client);
         }
-        protected internal void Listen()
+        protected internal void Listen_Client()
         {
             try
             {

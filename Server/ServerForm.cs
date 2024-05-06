@@ -52,7 +52,7 @@ namespace Server
                 btnTurnOn.Enabled = false;
                 btnTurnOff.Enabled = true;
                 serverObject = new ServerObject();
-                listenThread = new Thread(serverObject.Listen);
+                listenThread = new Thread(serverObject.Listen_Client);
                 listenThread.IsBackground = true;
                 listenThread.Start();
                 Text = "Server. State: on";
